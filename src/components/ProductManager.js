@@ -85,15 +85,23 @@ export class ProductManager {
   };
 }
 
-const productos = new ProductManager();
+// const productos = new ProductManager();
 
 /*
 productos.addProduct("titulo1", "descripcion1", 2000, "img1", 123, 40);
-productos.addProduct("titulo2", "descripcion2", 2000, "img2", 123, 40);
-productos.addProduct("titulo3", "descripcion3", 2000, "img3", 123, 40);
-productos.addProduct("titulo4", "descripcion4", 2000, "img4", 123, 40);
-productos.addProduct("titulo5", "descripcion5", 2000, "img5", 123, 40);
-productos.addProduct("titulo6", "descripcion6", 2000, "img6", 123, 40);
+productos.addProduct("titulo2", "descripcion2", 2000, "img2", 123, 440);
+productos.addProduct("titulo3", "descripcion3", 2000, "img3", 123, 420);
+productos.addProduct("titulo4", "descripcion4", 2000, "img4", 123, 20);
+productos.addProduct("titulo5", "descripcion5", 2000, "img5", 123, 30);
+productos.addProduct("titulo6", "descripcion6", 2000, "img6", 123, 50);
+productos.addProduct("titulo7", "descripcion7", 2000, "img7", 123, 70);
+productos.addProduct("titulo8", "descripcion8", 2000, "img8", 123, 60);
+productos.addProduct("titulo9", "descripcion9", 2000, "img9", 123, 30);
+productos.addProduct("titulo10", "descripcion10", 2000, "img10", 123, 150);
 */
+
+
+
+
 
 
