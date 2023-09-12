@@ -12,19 +12,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
 
+//!-----GET
 
+app.get("/products", async (req, res) => {
+ res.send(await product.getProducts());
+   
+});
+
+
+//!-----POST
 
 app.post("/products", async (req, res) => {
    let newProduct = req.body
    res.send(await product.writeProducts(newProduct));
    
-})
+});
 
 
 
 
 
-//LEVANTAR SERVIDOR
+
+
+
+
+//!-----LEVANTAR SERVIDOR
+
 app.listen(PORT, () => {
    console.log("\u001b[1;35m Servidor express Puerto: " + PORT);
 });
