@@ -13,7 +13,9 @@ class ProductManager {
     let products = await fs.readFile(this.path, 'utf-8');
     //se debe parsear
     let productsParse = JSON.parse(products); //archivo json
-    console.log(productsParse);
+    let allProducts = [...productsParse, product];
+    await fs.writeFile(this.path, JSON.stringify(allProducts));
+    return "Producto agregado";
   };
 }
 
