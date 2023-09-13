@@ -58,12 +58,12 @@ class ProductManager {
 
   async updateProducts(id, product) {
     let productId = await this.existId(id); //Verifico si existe
-    if(!productId) return "No se encuentra el producto";
+    if (!productId) return "No se encuentra el producto";
     await this.deletProductId(id); //Si el producto existe lo borro
-    let previousProducts = await this.readProducts(); 
-    let products = [{ ...product, id: id }, ...previousProducts]; //Sumo el producto con su nuevo contenido en los productos contenidos en el array. 
+    let previousProducts = await this.readProducts();
+    let products = [{ ...product, id: id }, ...previousProducts]; //Sumo el producto con su nuevo contenido en los productos contenidos en el array.
     await this.writeProducts(products);
-    return "Producto Actualizado"
+    return "Producto Actualizado";
   }
 
   //? Eliminar un producto
