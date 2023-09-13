@@ -27,6 +27,14 @@ app.post("/products", async (req, res) => {
   res.send(await product.addProduct(newProduct));
 });
 
+//Actualizar un producto
+app.put("/products/:id", async (req, res) => {
+   let id = req.params.id
+   let updateProduct = req.body;
+   res.send(await product.updateProducts(id, updateProduct));
+ });
+
+
 //Eliminar un producto
 app.delete("/products/:id", async (req, res) => {
   let id = req.params.id

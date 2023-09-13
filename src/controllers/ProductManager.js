@@ -8,39 +8,43 @@ class ProductManager {
 
   //? Lee los productos desde el archivo json.
 
-  readProducts = async () => {
+  async readProducts() {
     let products = await fs.readFile(this.productsFilePath, "utf-8"); //Leer los arreglos en el arreglo de productos
     return JSON.parse(products);
-  };
+  }
 
   //? Escribe los productos en el archivo json.
 
-  writeProducts = async (product) => {
+  async writeProducts(product) {
     await fs.writeFile(this.productsFilePath, JSON.stringify(product));
-  };
+  }
+
+  async existId(id) {
+    let products = await this.readProducts();
+    return products.find((prod) => prod.id === id);
+  }
 
   //? Agrega el producto al arreglo del archivo.
 
-  addProduct = async (product) => {
-    let productsOld = await this.readProducts();
+  async addProduct(product) {
+    let previousProducts = await this.readProducts();
     product.id = nanoid(5); //El numero que entra como parametro determina la cant de digitos del id.
-    let allProducts = [...productsOld, product];
+    let allProducts = [...previousProducts, product];
     await this.writeProducts(allProducts);
     return "Producto agregado";
-  };
+  }
 
   //? Obtener todos los productos contenidos en el arregl
 
-  getAllProducts = async () => {
+  async getAllProducts() {
     return await this.readProducts();
-  };
+  }
 
   //? Muestra el producto que corresponda a un id dado.
 
-  getProductId = async (id) => {
+  async getProductId(id) {
     try {
-      let products = await this.readProducts();
-      let productId = products.find((prod) => prod.id === id); // Buscar con el id
+      let productId = await this.existId(id); // Buscar con el id
       if (productId) {
         return productId;
       } else {
@@ -50,25 +54,31 @@ class ProductManager {
       console.error("Error al obtener el producto por ID: ", error);
       throw error;
     }
-  };
+  }
+
+  async updateProducts(id, product) {
+    let productId = await this.existId(id); //Verifico si existe
+    if(!productId) return "No se encuentra el producto";
+    await this.deletProductId(id); //Si el producto existe lo borro
+    let previousProducts = await this.readProducts(); 
+    let products = [{ ...product, id: id }, ...previousProducts]; //Sumo el producto con su nuevo contenido en los productos contenidos en el array. 
+    await this.writeProducts(products);
+    return "Producto Actualizado"
+  }
 
   //? Eliminar un producto
 
-  deletProductId = async (id) => {
-    
-      let products = await this.readProducts();
-      let productExists = products.some(prod => prod.id === id); //Verifico si el producto existe. 
-      if (productExists) {
-        let filterProducts = products.filter(prod => prod.id != id); //Productos cuyo id no coincide con el buscado. 
-        await this.writeProducts(filterProducts) //Escribir el nuevo json
-        return "Producto Eliminado"
-      } else {
-        return "No se encontró el producto a eliminar";
-      }
-    
-  };
-
-
+  async deletProductId(id) {
+    let products = await this.readProducts();
+    let productExists = products.some((prod) => prod.id === id); //Verifico si el producto existe.
+    if (productExists) {
+      let filterProducts = products.filter((prod) => prod.id != id); //Productos cuyo id no coincide con el buscado.
+      await this.writeProducts(filterProducts); //Escribir el nuevo json
+      return "Producto Eliminado";
+    } else {
+      return "No se encontró el producto a eliminar";
+    }
+  }
 }
 
 export default ProductManager;
