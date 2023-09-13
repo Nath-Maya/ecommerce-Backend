@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/products", ProductRouter);
 app.use("/api/cart", CartRouter);
 
-//Levantar servidor
+//Levantar servidor 
 app.listen(PORT, () => {
   console.log("\u001b[1;35m Servidor express Puerto: " + PORT);
 });

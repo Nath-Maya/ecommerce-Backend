@@ -3,24 +3,24 @@ import { nanoid } from "nanoid";
 
 class CartManager {
   constructor() {
-    this.cartFilePath = "/src/models/carts.json";
+    this.cartFilePath = "./src/models/carts.json";
   }
 
-  async readProducts() {
+  async readCart() {
     let carts = await fs.readFile(this.cartFilePath, "utf-8"); //Leer los arreglos en el arreglo de productos
     return JSON.parse(carts);
   }
 
-  async writeProducts(cart) {
+  async writeCart(cart) {
     await fs.writeFile(this.cartFilePath, JSON.stringify(cart));
   }
 
   async addCartProd() {
-   let previousCart = await this.readProducts();
+   let previousCart = await this.readCart();
    let id = nanoid(5)
-   let fullCart = [{id : id, products : {}}, ...previousCart]
-   await this.writeProducts(fullCart)
-   return "Carrito agregado"
+   let fullCart = [{id : id, products : []}, ...previousCart]
+   await this.writeCart(fullCart)
+   return "Producto agregado al carrito"
 
 }
 
