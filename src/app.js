@@ -24,7 +24,7 @@ app.get("/products", async (req, res) => {
 
 app.post("/products", async (req, res) => {
    let newProduct = req.body
-   res.send(await product.writeProducts(newProduct));
+   res.send(await product.addProducts(newProduct));
    
 });
 

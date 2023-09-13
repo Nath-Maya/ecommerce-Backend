@@ -14,16 +14,18 @@ class ProductManager {
      return  JSON.parse(products); //archivo json
   };
 
+  writeProducts = async(product) => {
+    await fs.writeFile(this.path, JSON.stringify(product));
+  };
+
 
   //! -----INGRESAR LOS PRODUCTOS EN EL ARREGLO.
 
-  writeProducts = async (product) => {
+  addProducts = async (product) => {
     let productsOld = await this.readProducts();
-
     try {
-     
       let allProducts = [...productsOld, product];
-      await fs.writeFile(this.path, JSON.stringify(allProducts));
+      await this.readProducts(allProducts);
       return "Producto agregado";
     } catch (error) {
       console.error("Error al ingresar al archivo de productos: ", error);
@@ -37,6 +39,18 @@ class ProductManager {
   getProducts = async () => {
     return await this.readProducts();
   };
+
+
+
+
+
+
+
+
+
+
+
+
 
 };
 

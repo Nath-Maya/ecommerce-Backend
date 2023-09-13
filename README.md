@@ -1,6 +1,13 @@
 # Proyecto de Backend
 
-## 💻 Instalación
+### ☑️ Dependencias:
+
+- Node.js 
+- npm 
+- Express.js
+
+
+### 💻 Instalación:
 
 1. Clonar el repositorio: 
 
@@ -16,15 +23,29 @@ cd src/app.js
 npm install
 ````
 
-## Uso
+### ▶️ Uso
 Para iniciar la aplicación, ejecuta el siguiente comando:
 ```shell
 nodemon ./src/app.js
 ````
+## 🗂️ Estructura del proyecto
+
+
+📂-- src/
+-   📁--- controllers/
+-   📁--- models/
+-   📁--- router/
+-   📁--- public/  
+🔐 LICENSE
+📒 app.js
+📄 README.md
+📄 package.json
+
+
 
 ### ⚙️ Funciones & Características:
 
-✅    **Crear productos:**  La instancia ProductManager cuenta con un metodo addProduct con el cual se pueden generar los productos. 
+✅    **Crear productos:**  La instancia ProductManager cuenta con un metodo addProducts con el cual se pueden generar los productos agregandolos 
 
 ✅    **Ruta Products:** Visualizar la totalidad de productos contenidos en el archivo
 ```shell  
