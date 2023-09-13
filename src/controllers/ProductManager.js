@@ -54,7 +54,19 @@ class ProductManager {
 
   //? Eliminar un producto
 
-  
+  deletProductId = async (id) => {
+    
+      let products = await this.readProducts();
+      let productExists = products.some(prod => prod.id === id); //Verifico si el producto existe. 
+      if (productExists) {
+        let filterProducts = products.filter(prod => prod.id != id); //Productos cuyo id no coincide con el buscado. 
+        await this.writeProducts(filterProducts) //Escribir el nuevo json
+        return "Producto Eliminado"
+      } else {
+        return "No se encontró el producto a eliminar";
+      }
+    
+  };
 
 
 }

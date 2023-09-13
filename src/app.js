@@ -28,9 +28,9 @@ app.post("/products", async (req, res) => {
 });
 
 //Eliminar un producto
-app.delete("/products", async (req, res) => {
-  let id = req.params.id;
-  res.send(await product.deleteProduct(id));
+app.delete("/products/:id", async (req, res) => {
+  let id = req.params.id
+  res.send(await product.deletProductId(id));
 });
 
 //!-----LEVANTAR SERVIDOR
