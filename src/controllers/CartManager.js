@@ -15,15 +15,24 @@ class CartManager {
     await fs.writeFile(this.cartFilePath, JSON.stringify(cart));
   }
 
-  async addCartProd() {
-   let previousCart = await this.readCart();
-   let id = nanoid(5)
-   let fullCart = [{id : id, products : []}, ...previousCart]
-   await this.writeCart(fullCart)
-   return "Producto agregado al carrito"
+  async existId(id) {
+    let carts = await this.readCart();
+    return carts.find(cart => cart.id === id);
+  }
 
+  async addCart() {
+    let previousCart = await this.readCart();
+    let id = nanoid(5);
+    let fullCart = [{ id: id, products: [] }, ...previousCart];
+    await this.writeCart(fullCart);
+    return "Producto agregado al carrito";
+  }
+
+  async getCartd(id) {
+    let cartId = await this.existId(id);
+    if (!cartId) return "Carrito no encontrado";
+    return cartId;
+  }
 }
 
-}
-
-export default CartManager
+export default CartManager;
