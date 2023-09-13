@@ -1,0 +1,38 @@
+import { Router } from "express";
+import ProductManager from "../controllers/ProductManager.js";
+
+const ProductRouter = Router();
+const product = new ProductManager();
+
+//Consulta de todos los productos
+ProductRouter.get("/products", async (req, res) => {
+   res.send(await product.getAllProducts());
+ });
+ 
+ //Consulta del producto con determinado id
+ ProductRouter.get("/products/:id", async (req, res) => {
+   let id = req.params.id; //req.params trae un string
+   res.send(await product.getProductId(id));
+ });
+ 
+ //Agregar un producto
+ ProductRouter.post("/products", async (req, res) => {
+   let newProduct = req.body;
+   res.send(await product.addProduct(newProduct));
+ });
+ 
+ //Actualizar un producto
+ ProductRouter.put("/products/:id", async (req, res) => {
+    let id = req.params.id
+    let updateProduct = req.body;
+    res.send(await product.updateProducts(id, updateProduct));
+  });
+ 
+ 
+ //Eliminar un producto
+ ProductRouter.delete("/products/:id", async (req, res) => {
+   let id = req.params.id
+   res.send(await product.deletProductId(id));
+ });
+
+ export default ProductRouter
