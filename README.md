@@ -45,7 +45,7 @@ nodemon ./src/app.js
 
 ### ⚙️ Funciones & Características:
 
-✅    **Crear productos:**  La instancia ProductManager cuenta con un metodo addProducts con el cual se pueden generar los productos agregandolos 
+✅    **Crear productos:**  La instancia ProductManager cuenta con un metodo addProduct con el cual se pueden generar los productos agregandolos 
 
 ✅    **Ruta Products:** Visualizar la totalidad de productos contenidos en el archivo
 ```shell  
