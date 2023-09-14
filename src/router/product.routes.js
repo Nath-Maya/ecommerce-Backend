@@ -9,6 +9,7 @@ ProductRouter.get("/", async (req, res) => {
   res.send(await product.getAllProducts());
 });
 
+
 //Consulta del producto con determinado id
 ProductRouter.get("/:id", async (req, res) => {
   let id = req.params.id; //req.params trae un string
