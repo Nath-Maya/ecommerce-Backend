@@ -2,7 +2,7 @@ import { promises as fs } from "fs";
 import { nanoid } from "nanoid";
 import ProductManager from "./ProductManager.js";
 
-const totalProduct = new ProductManager
+const totalProduct = new ProductManager();
 
 class CartManager {
   constructor() {
@@ -20,13 +20,13 @@ class CartManager {
 
   async existId(id) {
     let carts = await this.readCart();
-    return carts.find(cart => cart.id === id);
+    return carts.find((cart) => cart.id === id);
   }
 
   async addCart() {
     let previousCart = await this.readCart();
     let id = nanoid(5);
-    let fullCart = [{ id: id, products: [] }, ...previousCart];
+    let fullCart = [{ id: id, products: []}, ...previousCart];
     await this.writeCart(fullCart);
     return "Carrito agregado";
   }
@@ -37,19 +37,33 @@ class CartManager {
     return cartId;
   }
 
+  
   async addProductCart(cartId, productId) {
-   let cartById = await this.existId(cartId);
-   if(!cartById) return "Carrito no encontrado";
-   let productById = await totalProduct.existId(productId)
-   if(!cartById) return "Producto no encontrado"
+    let cartById = await this.existId(cartId);
+    if (!cartById) return "Carrito no encontrado";
+    let productById = await totalProduct.existId(productId);
+    if (!cartById) return "Producto no encontrado";
 
-   let allCart = await this.readCart()
-   let cartFilter = allCart.filter(prod => prod.id != productId)
-   let totalCart = [{ id: cartId, products: { id: productById.id, cantidad: 1 } }, ...cartFilter];
-   await this.writeCart(totalCart);
-   return "Producto agregado al carrito"
-
-}
+    let allCart = await this.readCart();
+    let cartFilter = allCart.filter((cart) => cart.id != cartId);
+    if (cartById.products.some(prod => prod.id === productId)){
+      let productExistCart = cartById.products.find(
+        (prod) => prod.id === productId);
+      productExistCart.cantidad + 1;
+      let cartConcat = [cartById, ...cartFilter];
+      await this.writeCart(cartConcat);
+      return "Producto SUMADO al carrito";
+    }
+    
+    let totalCart = [
+      { id: cartId, products: { id:productById.id, cantidad: 1 } },
+      ...cartFilter,
+    ];
+    await this.writeCart(totalCart);
+    return "Producto agregado al carrito";
+    
+  }
+  
 }
 
 export default CartManager;
