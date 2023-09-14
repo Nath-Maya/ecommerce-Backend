@@ -28,6 +28,7 @@ class CartManager {
     let id = nanoid(5);
     let fullCart = [{ id: id, products: []}, ...previousCart];
     await this.writeCart(fullCart);
+    console.log( "\u001b[1;33m Carrito agregado" );
     return "Carrito agregado";
   }
 
@@ -51,14 +52,15 @@ class CartManager {
       if (cartItem.id === cartId) {
         const existingProduct = cartItem.products.find((product) => product.id === productId);
         if (existingProduct) {
-          existingProduct.cantidad++;
+          existingProduct.quantity++;
         } else {
-          cartItem.products.push({ id: productId, cantidad: 1 });
+          cartItem.products.push({ id: productId, quantity: 1 });
         }
       }
     }
   
     await this.writeCart(allCart);
+    console.log( "\u001b[1;36m Producto agregado al carrito" )
     return "Producto agregado al carrito";
   }
   
