@@ -64,6 +64,7 @@ class ProductManager {
     let previousProducts = await this.readProducts();
     let products = [{ ...product, id: id }, ...previousProducts]; //Sumo el producto con su nuevo contenido en los productos contenidos en el array.
     await this.writeProducts(products);
+    console.log( "\u001b[1;36m Producto actualizado" )
     return "Producto Actualizado";
   }
 
@@ -75,6 +76,7 @@ class ProductManager {
     if (productExists) {
       let filterProducts = products.filter((prod) => prod.id != id); //Productos cuyo id no coincide con el buscado.
       await this.writeProducts(filterProducts); //Escribir el nuevo json
+      console.log( "\u001b[1;31m Producto Eliminado" )
       return "Producto Eliminado";
     } else {
       return "No se encontró el producto a eliminar";
