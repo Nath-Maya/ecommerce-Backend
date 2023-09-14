@@ -40,6 +40,11 @@ class ProductManager {
   async addProduct(product) {
     try {
       let previousProducts = await this.readProducts();
+      const codeExists = previousProducts.some((prod) => prod.code === product.code); //Validar que el producto con codigo repetido no sea agregado.
+
+    if (codeExists) {
+      throw new Error(`Ya existe un producto con el código: ${product.code}`);
+    }
       product.id = nanoid(5); //El numero que entra como parametro determina la cant de digitos del id.
       let allProducts = [...previousProducts, product];
       await this.writeProducts(allProducts);
