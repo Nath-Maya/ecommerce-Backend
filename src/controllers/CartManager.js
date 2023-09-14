@@ -1,5 +1,8 @@
 import { promises as fs } from "fs";
 import { nanoid } from "nanoid";
+import ProductManager from "./ProductManager.js";
+
+const totalProduct = new ProductManager
 
 class CartManager {
   constructor() {
@@ -25,7 +28,7 @@ class CartManager {
     let id = nanoid(5);
     let fullCart = [{ id: id, products: [] }, ...previousCart];
     await this.writeCart(fullCart);
-    return "Producto agregado al carrito";
+    return "Carrito agregado";
   }
 
   async getCartd(id) {
@@ -33,6 +36,20 @@ class CartManager {
     if (!cartId) return "Carrito no encontrado";
     return cartId;
   }
+
+  async addProductCart(cartId, productId) {
+   let cartById = await this.existId(cartId);
+   if(!cartById) return "Carrito no encontrado";
+   let productById = await totalProduct.existId(productId)
+   if(!cartById) return "Producto no encontrado"
+
+   let allCart = await this.readCart()
+   let cartFilter = allCart.filter(prod => prod.id != productId)
+   let totalCart = [{ id: cartId, products: { id: productById.id, cantidad: 1 } }, ...cartFilter];
+   await this.writeCart(totalCart);
+   return "Producto agregado al carrito"
+
+}
 }
 
 export default CartManager;
