@@ -37,32 +37,32 @@ class CartManager {
     return cartId;
   }
 
-  
-  async addProductCart(cartId, productId) {
-    let cartById = await this.existId(cartId);
-    if (!cartById) return "Carrito no encontrado";
-    let productById = await totalProduct.existId(productId);
-    if (!cartById) return "Producto no encontrado";
 
-    let allCart = await this.readCart();
-    let cartFilter = allCart.filter((cart) => cart.id != cartId);
-    if (cartById.products.some(prod => prod.id === productId)){
-      let productExistCart = cartById.products.find(
-        (prod) => prod.id === productId);
-      productExistCart.cantidad + 1;
-      let cartConcat = [cartById, ...cartFilter];
-      await this.writeCart(cartConcat);
-      return "Producto SUMADO al carrito";
+  async addProductCart(cartId, productId) {
+    const cartById = await this.existId(cartId);
+    if (!cartById) return "Carrito no encontrado";
+    
+    const productById = await totalProduct.existId(productId);
+    if (!productById) return "Producto no encontrado";
+  
+    const allCart = await this.readCart();
+  
+    for (const cartItem of allCart) {
+      if (cartItem.id === cartId) {
+        const existingProduct = cartItem.products.find((product) => product.id === productId);
+        if (existingProduct) {
+          existingProduct.cantidad++;
+        } else {
+          cartItem.products.push({ id: productId, cantidad: 1 });
+        }
+      }
     }
-    
-    let totalCart = [
-      { id: cartId, products: { id:productById.id, cantidad: 1 } },
-      ...cartFilter,
-    ];
-    await this.writeCart(totalCart);
+  
+    await this.writeCart(allCart);
     return "Producto agregado al carrito";
-    
   }
+  
+  
   
 }
 
