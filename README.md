@@ -26,34 +26,18 @@ npm install
 ### ▶️ Uso
 Para iniciar la aplicación, ejecuta el siguiente comando:
 ```shell
-nodemon ./src/app.js
+npm start ./src/app.js
 ````
-## 🗂️ Estructura del proyecto
 
+### 🌐 Servidor:
 
-📂-- src/
--   📁--- controllers/
--   📁--- models/
--   📁--- router/
--   📁--- public/  
-🔐 LICENSE
-📒 app.js
-📄 README.md
-📄 package.json
+✅    **Servidor:** Se levanta el servidor con *Express js*.
 
+**Para realizar las consultas debe ser con el servidor:**
 
-
-### ⚙️ Funciones & Características:
-
-✅    **Crear productos:**  La instancia ProductManager cuenta con un metodo addProduct con el cual se pueden generar los productos agregandolos 
-
-✅    **Ruta Products:** Visualizar la totalidad de productos contenidos en el archivo
-```shell  
-src/productos.txt
-````
 por medio del navegador consultando en el endpoint:
 ```shell  
-http://localhost:8080/products
+http://localhost:8080/
 ````
 
 ✅    **Filtro por id:** Indicando un # de id  se puede visualizar el producto correspondiente al id. Ejemplo:
@@ -68,7 +52,73 @@ http://localhost:8080/products/2
 http://localhost:8080/products/?limit=3
 ````
 
-✅    **Servidor:** Se levanta el servidor con *Express js*.
+### 🔀 Rutas:
+
+1. Productos:
+```
+http://localhost:8080/api/products
+```
+2. Carritos:
+```
+http://localhost:8080/api/cart
+```
+## 🗂️ Estructura del proyecto:
+
+
+📂-- src/
+-   📁--- controllers/
+-------📄 CartManager.js
+-------📄 ProductManager.js
+-   📁--- models/
+-------📄 carts.json
+-------📄 products.json
+-   📁--- public/
+-   📁--- router/
+-------📄 cart.routes.js
+-------📄 product.router.js
+🔐 LICENSE
+📒 app.js
+📄 README.md
+📄 package.json
+
+
+
+### ⚙️ Funciones & Características:
+
+✅    **ProductMaganer:**  La instancia  cuenta con un las 4 operaciones básicas CRUD que se pueden realizar en el sistema de gestion de datos.
+
+- ➕ **addProduct:** Agregar un producto en el método POST, asignando un id de forma de que no se repita. Los productos tienen la siguiente estructura: 
+
+```
+{
+    "title": "Producto 1",
+    "description": "Descripción del Producto 1",
+    "code": "P001",
+    "price": 19.99,
+    "status": true,
+    "stock": 50,
+    "category": "Electrónica",
+    "thumbnails": [
+      "imagen1.jpg",
+      "imagen2.jpg"
+    ]
+  }
+```
+- **getAllProducts:** Permite visualizar con el método GET de http, los productos agregados previamente.
+También se cuenta con un método para visualizar un producto con su respectivo id: **getProductId**
+
+- 🔁 **updateProducts:** Actualiza un producto que ya este agregado previamente, recibe como parametro el id del mismo. 
+
+- ❌ **deleteProductId:** También, recibiendo un id como parametro, se elimina un producto. 
+
+✅    **CartMaganer:**  De igual forma que el ProductManager, maneja la misma interacción con los datos.
+
+-  ➕ 🛒 **addCart:** Crear un carrito con un id generado automaticamente y no repetible; y con un arreglo donde se agregaran los productos existentes en el archivo products.json. 
+
+-  ▶️ 🛒  **getCart:** Se consultan los carritos creados. 
+
+-  📦 ➕ 🛒 **addProductCart:** Teniendo en cuenta el id del carrito seleccionado, se adiciona un producto de los existentes. 
+
 
 
 ## 🔐 Licencia
