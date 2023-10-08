@@ -18,18 +18,24 @@ app.listen(PORT, () => {
 
 //**** CONECT DATABASE  */
 
-mongoose.connect("mongodb+srv://1234Maya@cluster0.g6udpni.mongodb.net/")
+mongoose.connect("mongodb+srv://nathamayaramirez93:1234Maya@cluster0.g6udpni.mongodb.net/")
 .then(()=> {
-  console.log("\u001b[1;32m Connection successful at the database");
+  console.log("\u001b[1;34m Connection successful at the database");
 })
 .catch(error => {
   console.error("\u001b[1;31m Connection failed at the database" + error)
 
 });
 
-
+/*
 //Rutas para verificar funcionamiento de CRUD con thunderclient
 app.use("/api/products", ProductRouter);
 app.use("/api/cart", CartRouter);
-app.use("/api/message", MessageRouter)
+app.use("/api/message", MessageRouter);
 
+//**** HANDLEBARS */
+/*
+app.engine('handlebars',handlebars.engine());
+app.set('views',__dirname+'/views');
+app.set('view engine','handlebars');
+*/
