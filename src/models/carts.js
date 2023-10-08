@@ -3,9 +3,9 @@ import mongoose from "mongoose";
 const cartsCollection = "carts";
 
 const cartSchema = mongoose.Schema({
-   description: String,
-   quantity: Number,
-   total: Number
+  description: { type: String, required: true },
+  quantity: { type: Number, required: true },
+  total: { type: Number, required: true }
 });
 
 module.exports = mongoose.model(cartsCollection, cartSchema);
