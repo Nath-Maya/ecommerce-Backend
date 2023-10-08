@@ -1,25 +1,54 @@
 import { Router } from "express";
-import CartManager from "../controllers/CartManager.js";
+import { cartModel } from "../dao/models/carts.model.js";
 
-const CartRouter = Router();
-const carts = new CartManager();
+const router = Router(); //Crear enrutador
 
-CartRouter.post("/", async (req, res) => {
-  res.send(await carts.addCart()); 
+//**** GET */
+
+router.get("/", async (req, res) => {
+  try {
+    let users = await userModel.find(); //Buscar en el modelo de usuario
+    res.send({ result: "sucess", payload: users });
+  } catch (error) {
+    console.log("\u001b[1;34m" + error);
+  }
 });
 
-CartRouter.get("/", async (req, res) => {
-  res.send(await carts.readCart());
-});
- 
-CartRouter.get("/:id", async (req, res) => {
-   res.send(await carts.getCartd(req.params.id));
- });
+//**** POST */
 
- CartRouter.post("/:cid/products/:pid", async (req, res) => {
-   let cartId = req.params.cid;
-   let productId = req.params.pid;
-   res.send(await carts.addProductCart(cartId, productId));
+router.post("/", async (req, res) => {
+  let { description, quantity, total } = req.body;
+
+  //Valido que los datos esten completos.
+  if (!description || quantity || total) {
+    res.send({ status: "error", error: "Faltan datos" });
+  }
+  let result = await cartModel.create({ description, quantity, total }); //Creo el resultado en la base de datos.
+  res.send({ result: "sucess", payload: result });
+});
+
+//**** PUT */
+
+router.put("/:idCart", async (res,req) => {
+  let { idCart} = req.params
+
+  let cartsToReplace = req.body
+  if(!cartsToReplace.description || !cartsToReplace.quantity || !cartsToReplace.total) {
+    res.send({status:"error" , error:"No hay datos en parametros"})
+  }
+  let result = await cartModel.updateOne({ _id: idCart }, cartsToReplace);
+  res.send({ result: "sucess", payload: result});
 })
 
-export default CartRouter;
+//**** DELETE */
+
+router.delete("/:idCart", async (res,req) => {
+  let { idCart} = req.params
+
+  let result = await cartModel.deleteOne({ _id: idCart });
+  res.send({ result: "sucess", payload: result});
+})
+
+
+
+export default router;

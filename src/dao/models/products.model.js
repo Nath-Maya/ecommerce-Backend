@@ -10,4 +10,4 @@ const productSchema = mongoose.Schema({
    stock: { type: Number, required: true},
 });
 
-module.exports = mongoose.model(productsCollection, productSchema);
+export const productModel = mongoose.model(productsCollection, productSchema);
