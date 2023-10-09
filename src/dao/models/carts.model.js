@@ -8,4 +8,6 @@ const cartSchema = mongoose.Schema({
   total: { type: Number, required: true }
 });
 
-export const cartModel = mongoose.model(cartsCollection, cartSchema);
+ const cartModel = mongoose.model(cartsCollection, cartSchema);
+
+ export default cartModel
