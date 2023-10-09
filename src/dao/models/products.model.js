@@ -10,4 +10,6 @@ const productSchema = mongoose.Schema({
    stock: { type: Number, required: true},
 });
 
-export const productModel = mongoose.model(productsCollection, productSchema);
+const productModel = mongoose.model(productsCollection, productSchema);
+
+export default productModel

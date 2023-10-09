@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import cartRouter from "./routes/cart.routes.js"
+import productRouter from "./routes/product.routes.js";
 
 
 const app = express();
@@ -26,7 +27,7 @@ mongoose
 
 
 //Rutas para verificar funcionamiento de CRUD con thunderclient
-// app.use("/api/products", ProductRouter);
+app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 // app.use("/api/message", MessageRouter);
 
