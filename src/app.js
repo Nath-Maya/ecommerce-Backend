@@ -5,6 +5,7 @@ import productRouter from "./routes/product.routes.js";
 import __dirname from "./utils.js"
 import handlebars from 'express-handlebars';
 import viewsRouter from "./routes/view.routes.js"
+import messageRouter from "./routes/message.routes.js"
 
 
 const app = express();
@@ -33,7 +34,7 @@ mongoose
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use('/',viewsRouter)
-// app.use("/api/message", MessageRouter);
+app.use("/message", messageRouter);
 
 //**** HANDLEBARS */
 
