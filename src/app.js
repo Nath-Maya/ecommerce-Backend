@@ -2,6 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import cartRouter from "./routes/cart.routes.js"
 import productRouter from "./routes/product.routes.js";
+import __dirname from "./utils.js"
+import handlebars from 'express-handlebars';
+import viewsRouter from "./routes/view.routes.js"
 
 
 const app = express();
@@ -29,14 +32,15 @@ mongoose
 //Rutas para verificar funcionamiento de CRUD con thunderclient
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
+app.use('/',viewsRouter)
 // app.use("/api/message", MessageRouter);
 
 //**** HANDLEBARS */
-/*
+
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views');
 app.set('view engine','handlebars');
-*/
+
 
 //**** UP SERVER  */
 app.listen(PORT, () => {
