@@ -9,7 +9,7 @@ import messageRouter from "./routes/message.routes.js"
 
 
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 
 //Decirle al servidor que trabajaremos con JSON y que usara URL.
 app.use(express.json());
