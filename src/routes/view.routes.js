@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Products from "../dao/dbManager/products.js"
+import Products from "../DAO/dbManager/products.js"
 
 const router = Router();
 
