@@ -18,12 +18,11 @@ export default class Products {
 
   //! GET LIMIT
   //Definir el limite de productos a visualizar.
-  getProductosLimit = async(limit)=> {
+  getProductsLimit = async(limit)=> {
     try {
       const products = await productModel.find().limit(limit);
-      if (products.length < limit) {
-        limit = products.length;
-      }
+      limit = (products.length < limit) ?  products.length : limit;
+      
 
       return products;
     } catch (error) {
@@ -31,7 +30,22 @@ export default class Products {
     }
   }
 
-  //! 
+  //! GET PAGE
+  //Mostrar el listado de productos de la pagina solicitada
+  getProductsPage = async(page, productByPage)=> {
+     page = (page <= 0) ? 1 : page;
+      try {
+        const products = await productModel
+        .find()
+        .skip((page - 1) * productByPage)
+        .limit(productByPage)
+        return products;
+      } catch (error) {
+        throw error;
+      }
+    }
+  
+  
 
   //!   PUT
   updateProduct = async (idProduct, product) => {

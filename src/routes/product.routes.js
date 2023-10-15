@@ -33,15 +33,27 @@ productRouter.get("/", async (req, res) => {
 
 //! GET LIMIT
 
-productRouter.get("/muestraProductos", async (req, res) => {
+productRouter.get("/sample-products", async (req, res) => {
   let limit = 10;
   try {
-    const products = await productManager.getProductosLimit(limit);
+    const products = await productManager.getProductsLimit(limit);
     res.send({ status: "succes", payload: products });
   } catch (error) {
     console.error("Error en la ruta GET /products:", error);
   }
 });
+
+//! GET PAGE
+
+productRouter.get("/page-products", async (req, res) => {
+  let page = parseInt(req.params.page)
+  page = (isNaN(page) || page <= 0) ? 1 : page;
+
+  const productByPage = 15;
+  res.send(await productManager.getProductsPage(page, productByPage))
+
+})
+
 
 //!!  UPDATE PRODUCT
 //Actualizar un producto
