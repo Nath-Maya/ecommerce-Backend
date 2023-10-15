@@ -18,34 +18,43 @@ export default class Products {
 
   //! GET LIMIT
   //Definir el limite de productos a visualizar.
-  getProductsLimit = async(limit)=> {
+  getProductsLimit = async (limit) => {
     try {
       const products = await productModel.find().limit(limit);
-      limit = (products.length < limit) ?  products.length : limit;
-      
+      limit = products.length < limit ? products.length : limit;
 
       return products;
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   //! GET PAGE
   //Mostrar el listado de productos de la pagina solicitada
-  getProductsPage = async(page, productByPage)=> {
-     page = (page <= 0) ? 1 : page;
-      try {
-        const products = await productModel
+  getProductsPage = async (page, productByPage) => {
+    page = page <= 0 ? 1 : page;
+    try {
+      const products = await productModel
         .find()
         .skip((page - 1) * productByPage)
-        .limit(productByPage)
-        return products;
-      } catch (error) {
-        throw error;
-      }
+        .limit(productByPage);
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  //! GET QUERY
+  //Mostrar un documento que cumpla con el parametro solicitado.
+  getProductQuery = async (query) => {
+    try {
+      const products = await productModel.find({ description: { $regex: query, $options: "i"}});
+      return products;
+    } catch (error) {
+      throw error;
     }
   
-  
+  }
 
   //!   PUT
   updateProduct = async (idProduct, product) => {

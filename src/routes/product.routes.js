@@ -45,15 +45,20 @@ productRouter.get("/sample-products", async (req, res) => {
 
 //! GET PAGE
 
-productRouter.get("/page-products", async (req, res) => {
-  let page = parseInt(req.params.page)
-  page = (isNaN(page) || page <= 0) ? 1 : page;
+productRouter.get("/page-products/:page", async (req, res) => {
+  let page = parseInt(req.params.page);
+  page = isNaN(page) || page <= 0 ? 1 : page;
 
   const productByPage = 15;
-  res.send(await productManager.getProductsPage(page, productByPage))
+  res.send(await productManager.getProductsPage(page, productByPage));
+});
 
+//! GET QUERY
+
+productRouter.get("/query/:query", async (req, res) => {
+  const query = req.query.query
+  res.send(await productManager.getProductQuery(query))
 })
-
 
 //!!  UPDATE PRODUCT
 //Actualizar un producto
