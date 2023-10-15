@@ -89,7 +89,6 @@ productRouter.get("/sort/:sort", async (req, res) => {
   const sort = req.params.sort
   const sortOrder = (parseInt(sort) === 1 || parseInt(sort) === -1) ? (parseInt(sort) === -1 ? "desc" : "asc") : "asc";
 
-  console.log("----" + sortOrder)
   res.send(await productManager.getProductOrder(sortOrder))
 })
 

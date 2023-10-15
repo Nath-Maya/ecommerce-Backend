@@ -60,7 +60,6 @@ export default class Products {
   //! GET SORT
   //Ordenar los productos por precio
   getProductOrder = async (sort) => {
-    console.log("****" + sort)
     try {
       const products = await productModel.find().sort({ price: sort });
       return products;

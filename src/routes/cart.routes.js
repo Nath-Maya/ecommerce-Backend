@@ -25,17 +25,27 @@ cartRouter.post("/", async (req, res) => {
   res.send({ status: "success", payload: result });
 });
 
-  //**** GET */
-  
-  cartRouter.get("/", async (req, res) => {
-    try {
-      let users = await cartManager.getAllCart(); //Buscar en el modelo de usuario
-      res.send({ result: "sucess", payload: users });
-    } catch (error) {
-      console.log("\u001b[1;34m" + error);
-    }
-  })
+//**** GET */
 
+cartRouter.get("/", async (req, res) => {
+  try {
+    let carts = await cartManager.getAllCart(); //Buscar en el modelo de usuario
+    res.send({ result: "sucess", payload: carts });
+  } catch (error) {
+    console.log("\u001b[1;34m Error al buscar carritos" + error);
+  }
+});
+
+//**** GET CART BY ID */
+cartRouter.get("/:idCart", async (req, res) => {
+  let idCart = req.params.idCart;
+  try {
+    let carts = await cartManager.getCartId(idCart);
+    res.send({ result: "sucess", payload: carts });
+  } catch (error) {
+    console.log("\u001b[1;34m Carrito no encontrado" + error)
+  }
+});
 
 //**** UPDATE */
 cartRouter.put("/:idCart", async (req, res) => {
@@ -52,11 +62,11 @@ cartRouter.put("/:idCart", async (req, res) => {
   res.send({ status: "sucess", payload: result });
 });
 
-//! DELETE 
+//! DELETE PRODUCT IN CART
 cartRouter.delete("/:idCart", async (req, res) => {
   let idCart = req.params.idCart;
   let idProduct = req.params.idProduct;
-  res.send( await carts.deleteProductCart(idCart, idProduct))
+  res.send(await carts.deleteProductCart(idCart, idProduct));
 });
 
 export default cartRouter;
