@@ -24,8 +24,33 @@ productRouter.post("/", async (req, res) => {
 // Consulta de todos los productos con límite opcional
 productRouter.get("/", async (req, res) => {
   try {
-    const products = await productManager.getAllProducts();
-    res.send({ status: "succes", payload: products });
+    // const products = await productManager.getAllProducts();
+    // res.send({ status: "succes", payload: products });
+
+    const page = parseInt(req.query.page) || 1; // Obtén el número de página, predeterminado a 1 si no se proporciona.
+    const pageSize = 10; // Define el tamaño de la página.
+
+    const totalProducts = await productManager.getAllProducts();
+    const totalPages = Math.ceil(totalProducts / pageSize);
+
+    const skip = (page - 1) * pageSize;
+
+    const products = await productManager.getProductsPage(page, pageSize);
+    const response = {
+      status: "success",
+      payload: products,
+      totalPages: totalPages,
+      prevPage: page > 1 ? page - 1 : null,
+      nextPage: page < totalPages ? page + 1 : null,
+      page: page,
+      hasPrevPage: page > 1,
+      hasNextPage: page < totalPages,
+      prevLink: page > 1 ? `/products/?page=${page - 1}` : null,
+      nextLink: page < totalPages ? `/products/?page=${page + 1}` : null
+    };
+
+    res.json(response);
+
   } catch (error) {
     console.error("Error en la ruta GET /products:", error);
   }
@@ -61,7 +86,7 @@ productRouter.get("/query/:query", async (req, res) => {
 })
 
 //!GET SORT
-
+// Para valores de mayor a menor, pasar el -1 , y para valores de menor a mayor pasar el 1 
 productRouter.get("/sort/:sort", async (req, res) => {
   const sort = req.params.sort
   const sortOrder = (parseInt(sort) === 1 || parseInt(sort) === -1) ? (parseInt(sort) === -1 ? "desc" : "asc") : "asc";
