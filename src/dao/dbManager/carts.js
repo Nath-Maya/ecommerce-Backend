@@ -3,20 +3,24 @@ import cartModel from "../models/carts.model.js";
 export default class Cart {
   constructor() {}
 
+  //* GET 
+  //Consulta de todos los CARTS generados
+  getAllCart = async () => {
+    let result = await cartModel.find().lean();
+    return result;
+  };
+
   //* POST
+  //Crear un carrito nuevo
   saveCart = async (cart) => {
     let result = await cartModel.create(cart);
     console.log("\u001b[1;36m Cart guardado");
     return result;
   };
 
-  //* GET
-  getAllCart = async () => {
-    let result = await cartModel.find().lean();
-    return result;
-  };
 
   //* PUT
+  //Actualizar un carrito con determinado id
   updateCart = async (idCart, cart) => {
     let result = await cartModel.findByIdAndUpdate(idCart, cart, { new: true }); //Entrego el id y entrego la data que debo actualizar
     console.log("\u001b[1;36m Cart actualizado");
@@ -24,6 +28,7 @@ export default class Cart {
   };
 
     //* DELETE
+  //Eliminar el carrito con un id en especifico suministrado. 
   deleteCart = async (idCart) => {
     let result = await cartModel.deleteOne({ _id: `${idCart}` });
     console.log("\u001b[1;31m Cart Eliminado");
