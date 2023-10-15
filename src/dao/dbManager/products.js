@@ -48,13 +48,26 @@ export default class Products {
   //Mostrar un documento que cumpla con el parametro solicitado.
   getProductQuery = async (query) => {
     try {
-      const products = await productModel.find({ description: { $regex: query, $options: "i"}});
+      const products = await productModel.find({
+        description: { $regex: query, $options: "i" },
+      });
       return products;
     } catch (error) {
       throw error;
     }
-  
-  }
+  };
+
+  //! GET SORT
+  //Ordenar los productos por precio
+  getProductOrder = async (sort) => {
+    console.log("****" + sort)
+    try {
+      const products = await productModel.find().sort({ price: sort });
+      return products;
+    } catch (error) {
+      throw new Error(`Error al ordenar productos: ${error.message}`);
+    }
+  };
 
   //!   PUT
   updateProduct = async (idProduct, product) => {

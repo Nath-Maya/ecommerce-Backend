@@ -60,6 +60,16 @@ productRouter.get("/query/:query", async (req, res) => {
   res.send(await productManager.getProductQuery(query))
 })
 
+//!GET SORT
+
+productRouter.get("/sort/:sort", async (req, res) => {
+  const sort = req.params.sort
+  const sortOrder = (parseInt(sort) === 1 || parseInt(sort) === -1) ? (parseInt(sort) === -1 ? "desc" : "asc") : "asc";
+
+  console.log("----" + sortOrder)
+  res.send(await productManager.getProductOrder(sortOrder))
+})
+
 //!!  UPDATE PRODUCT
 //Actualizar un producto
 productRouter.put("/:idProduct", async (req, res) => {
@@ -69,6 +79,7 @@ productRouter.put("/:idProduct", async (req, res) => {
   let result = await productManager.updateProduct(idProduct, productReplace);
   res.send({ status: "sucess", payload: result });
 });
+
 
 //!!  DELETE PRODUCT
 //Eliminar un producto
