@@ -16,6 +16,22 @@ export default class Products {
     return result;
   };
 
+  //! GET LIMIT
+  //Definir el limite de productos a visualizar.
+  getProductosLimit = async(limit)=> {
+    try {
+      const products = await productModel.find().limit(limit);
+      if (products.length < limit) {
+        limit = products.length;
+      }
+
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //! 
 
   //!   PUT
   updateProduct = async (idProduct, product) => {

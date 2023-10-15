@@ -9,7 +9,7 @@ for (let i = 0; i < stockProducts; i++) {
   const product = {
     title: faker.commerce.productName(),
     description: faker.lorem.sentence(),
-    price: faker.commerce.price(),
+    price: faker.datatype.number(),
     image: faker.image.imageUrl(),
     stock: faker.datatype.number()
   };
