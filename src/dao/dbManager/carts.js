@@ -22,10 +22,39 @@ export default class Cart {
     console.log("\u001b[1;36m Cart actualizado");
     return result;
   };
-  //* DELETE
+
+    //* DELETE
   deleteCart = async (idCart) => {
     let result = await cartModel.deleteOne({ _id: `${idCart}` });
     console.log("\u001b[1;31m Cart Eliminado");
     return result;
+  };
+  
+  //! DELETE PRODUCT FROM CART
+  //Eliminar un producto de un carrito especifico, con los id suministrados tanto de cart como de product.
+
+  deleteProductCart = async (idCart, idProduct) => {
+    {
+      try {
+        const cart = await cartsModel.findById(idCart);
+        if (!cart) {
+          return "Carrito no encontrado";
+        }
+        const productIndex = cart.products.findIndex(
+          (product) => product.productId === idProduct
+        );
+
+        if (productIndex !== -1) {
+          cart.products.splice(productIndex, 1);
+          await cart.save();
+          return "Producto eliminado del carrito";
+        } else {
+          return "Producto no encontrado en el carrito";
+        }
+      } catch (error) {
+        console.error("Error al eliminar el producto del carrito:", error);
+        return "Error al eliminar el producto del carrito";
+      }
+    }
   };
 }

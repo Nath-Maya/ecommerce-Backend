@@ -24,11 +24,9 @@ productRouter.post("/", async (req, res) => {
 // Consulta de todos los productos con límite opcional
 productRouter.get("/", async (req, res) => {
   try {
-    // const products = await productManager.getAllProducts();
-    // res.send({ status: "succes", payload: products });
 
-    const page = parseInt(req.query.page) || 1; // Obtén el número de página, predeterminado a 1 si no se proporciona.
-    const pageSize = 10; // Define el tamaño de la página.
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 10; 
 
     const totalProducts = await productManager.getAllProducts();
     const totalPages = Math.ceil(totalProducts / pageSize);
