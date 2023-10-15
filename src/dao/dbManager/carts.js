@@ -31,9 +31,14 @@ export default class Cart {
   //* POST
   //Crear un carrito nuevo
   saveCart = async (cart) => {
-    let result = await cartModel.create(cart);
-    console.log("\u001b[1;36m Cart guardado");
-    return result;
+    try 
+    {
+      await cartModel.create(cart);
+      return 'Carrito agregado';
+    } catch (error) {
+      console.error('Error al agregar el carrito:', error);
+      return 'Error al agregar el carrito';
+    }
   };
 
   //* PUT
@@ -54,7 +59,7 @@ export default class Cart {
 
   //!POST PRODUCT IN CART
   //Insertar un producto en un carrito determinado.
-
+/*
   insertProductCart = async (idCart, idProduct) => {
     try {
       const cart = await cartModel.findById(idCart);
@@ -106,4 +111,5 @@ export default class Cart {
       }
     }
   };
+  */
 }

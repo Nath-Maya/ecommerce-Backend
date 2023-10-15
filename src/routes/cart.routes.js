@@ -6,6 +6,7 @@ const cartManager = new Cart();
 
 //**** POST */
 cartRouter.post("/", async (req, res) => {
+  
   let { description, quantity, total } = req.body;
 
   //Valido que los datos esten completos.
@@ -28,6 +29,7 @@ cartRouter.post("/", async (req, res) => {
 //**** GET */
 
 cartRouter.get("/", async (req, res) => {
+
   try {
     let carts = await cartManager.getAllCart(); //Buscar en el modelo de usuario
     res.send({ result: "sucess", payload: carts });

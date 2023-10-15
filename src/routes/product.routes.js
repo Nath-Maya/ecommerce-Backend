@@ -7,13 +7,14 @@ const productManager = new Product();
 //!!  POST PRODUCT
 //Agregar un producto
 productRouter.post("/", async (req, res) => {
-  let { title, description, price, image, stock } = req.body;
+  let { title, description, price, image,category, stock } = req.body;
 
   const newProduct = {
     title: title,
     description: description,
     price: price,
     image: image,
+    category: category,
     stock: stock,
   };
 
