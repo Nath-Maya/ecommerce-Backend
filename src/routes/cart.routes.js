@@ -4,15 +4,14 @@ import Cart from "../DAO/dbManager/carts.js";
 const cartRouter = Router(); //Crear enrutador
 const cartManager = new Cart();
 
-//**** POST */
+//**** POST CART*/
 cartRouter.post("/", async (req, res) => {
 
   let newCart = req.body
   res.send(await cartManager.saveCart(newCart))
 });
 
-//**** GET */
-
+//**** GET CART*/
 cartRouter.get("/", async (req, res) => {
 
   try {
@@ -25,6 +24,7 @@ cartRouter.get("/", async (req, res) => {
 
 //**** GET CART BY ID */
 cartRouter.get("/:idCart", async (req, res) => {
+
   let idCart = req.params.idCart;
   try {
     let carts = await cartManager.getCartId(idCart);
@@ -36,6 +36,7 @@ cartRouter.get("/:idCart", async (req, res) => {
 
 //**** UPDATE */
 cartRouter.put("/:idCart", async (req, res) => {
+
   let { idCart } = req.params;
   let cartsToReplace = req.body;
   if (
@@ -48,6 +49,20 @@ cartRouter.put("/:idCart", async (req, res) => {
   let result = await cartManager.updateCart(idCart, cartsToReplace);
   res.send({ status: "sucess", payload: result });
 });
+
+//**** DELETE CART */
+cartRouter.delete("/:idCart", async (req,res) => {
+
+  let idCart = req.params.idCart;
+  try {
+    let carts = await cartManager.deleteCart(idCart);
+    console.log("\u001b[1;34m Carrito eliminado" + error);
+    res.send({ result: "sucess", payload: carts });
+  } catch (error) {
+    console.log("\u001b[1;34m Error al eliminar carrito del carrito " + error);
+  }
+})
+
 
 //! DELETE PRODUCT IN CART
 cartRouter.delete("/:idCart", async (req, res) => {
