@@ -20,8 +20,7 @@ export default class Cart {
   getCartId = async (idCart) => {
     try {
       const cart = await cartModel.findById(idCart);
-      console.log("\u001b[1;36m Carrito Encontrado: " +
-      `${idCart}`);
+      console.log("\u001b[1;36m Carrito Encontrado: ");
       return cart;
     } catch (error) {
       console.log("\u001b[1;31m Carrito NO Encontrado");
@@ -59,7 +58,7 @@ export default class Cart {
 
   //!POST PRODUCT IN CART
   //Insertar un producto en un carrito determinado.
-/*
+
   insertProductCart = async (idCart, idProduct) => {
     try {
       const cart = await cartModel.findById(idCart);
@@ -111,5 +110,5 @@ export default class Cart {
       }
     }
   };
-  */
+  
 }

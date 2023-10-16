@@ -34,7 +34,7 @@ cartRouter.get("/:idCart", async (req, res) => {
   }
 });
 
-//**** UPDATE */
+//**** UPDATE CART*/
 cartRouter.put("/:idCart", async (req, res) => {
 
   let { idCart } = req.params;
@@ -63,12 +63,20 @@ cartRouter.delete("/:idCart", async (req,res) => {
   }
 })
 
+//! POST PRODUCT IN CART
+cartRouter.post("/:idCart/products/:idProducts", async (req,res) => {
+  let idCart = req.params.idCart;
+  let idProduct = req.params.idProducts;
+  res.send(await cartManager.insertProductCart(idCart, idProduct))
+})
+
 
 //! DELETE PRODUCT IN CART
 cartRouter.delete("/:idCart", async (req, res) => {
+
   let idCart = req.params.idCart;
   let idProduct = req.params.idProduct;
-  res.send(await carts.deleteProductCart(idCart, idProduct));
+  res.send(await cartManager.deleteProductCart(idCart, idProduct));
 });
 
 export default cartRouter;
