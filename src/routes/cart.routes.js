@@ -70,6 +70,14 @@ cartRouter.post("/:idCart/products/:idProducts", async (req,res) => {
   res.send(await cartManager.insertProductCart(idCart, idProduct))
 })
 
+//! UPDATE PRODUCT IN CART
+cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
+  let idCart = req.params.idCart;
+  let idProduct = req.params.idProduct;
+  let productUpdate = req.body;
+  res.send(await cartManager.updateProductCart(idCart, idProduct, productUpdate))
+})
+
 
 //! DELETE PRODUCT IN CART
 cartRouter.delete("/:idCart", async (req, res) => {

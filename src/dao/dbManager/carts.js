@@ -1,4 +1,5 @@
 import cartModel from "../models/carts.model.js";
+import productModel from "../models/products.model.js";
 
 export default class Cart {
   constructor() {}
@@ -30,13 +31,12 @@ export default class Cart {
   //* POST
   //Crear un carrito nuevo
   saveCart = async (cart) => {
-    try 
-    {
+    try {
       await cartModel.create(cart);
-      return 'Carrito agregado';
+      return "Carrito agregado";
     } catch (error) {
-      console.error('Error al agregar el carrito:', error);
-      return 'Error al agregar el carrito';
+      console.error("Error al agregar el carrito:", error);
+      return "Error al agregar el carrito";
     }
   };
 
@@ -64,7 +64,7 @@ export default class Cart {
       const cart = await cartModel.findById(idCart);
       if (!cart) return "Carrito no encontrado";
       const existingProduct = cart.products.find(
-        (product) => product.productId === prodId
+        (product) => product.idProduct === idProduct
       );
 
       if (existingProduct) {
@@ -80,6 +80,34 @@ export default class Cart {
       return cart;
     } catch (error) {
       throw "Error al insertar producto en carrito" + error;
+    }
+  };
+
+  //! UPDATE PRODUCT IN CART
+  //Teniendo en cuenta el id de un producto contenido en un carrito, se modifica.
+
+  updateProductCart = async (idCart, idProduct, cartUpdate) => {
+    try {
+      const cart = await cartModel.findById(idCart);
+      if (!cart) return "Carrito no encontrado";
+      const existingProduct = await productManager.getById({ _id: `${idProduct}`});
+
+      console.log( idCart +'----'+ idProduct)
+      console.log(existingProduct +'oooooooooo')
+      if (existingProduct) {
+        let result = await cartModel.findByIdAndUpdate(idCart, cartUpdate, {
+          new: true,
+        });
+
+        
+      return result
+      } else {
+        console.log("Producto no existe");
+      }
+      console.log("\u001b[1;36m Carrito actualizado");
+      return cart;
+    } catch (error) {
+      throw "Error al actualizar carrito" + error;
     }
   };
 
@@ -110,5 +138,4 @@ export default class Cart {
       }
     }
   };
-  
 }

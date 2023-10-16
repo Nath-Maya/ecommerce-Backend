@@ -7,7 +7,7 @@ const productManager = new Product();
 //!!  POST PRODUCT
 //Agregar un producto
 productRouter.post("/", async (req, res) => {
-  let { title, description, price, image,category, stock } = req.body;
+  let { title, description, price, image, category, stock } = req.body;
 
   const newProduct = {
     title: title,
@@ -25,9 +25,8 @@ productRouter.post("/", async (req, res) => {
 // Consulta de todos los productos con límite opcional
 productRouter.get("/", async (req, res) => {
   try {
-
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 10; 
+    const pageSize = 10;
 
     const totalProducts = await productManager.getAllProducts();
     const totalPages = Math.ceil(totalProducts / pageSize);
@@ -45,13 +44,24 @@ productRouter.get("/", async (req, res) => {
       hasPrevPage: page > 1,
       hasNextPage: page < totalPages,
       prevLink: page > 1 ? `/products/?page=${page - 1}` : null,
-      nextLink: page < totalPages ? `/products/?page=${page + 1}` : null
+      nextLink: page < totalPages ? `/products/?page=${page + 1}` : null,
     };
 
     res.json(response);
-
   } catch (error) {
     console.error("Error en la ruta GET /products:", error);
+  }
+});
+
+//! GET PRODUCT ID
+
+productRouter.get("/:idProduct", async (req, res) => {
+  let idProduct  = req.params.idProduct;
+  try {
+    let result = await productManager.getProductId(idProduct);
+    res.send({ status: "succes", payload: result });
+  } catch (error) {
+    console.error("Producto no encontrado");
   }
 });
 
@@ -80,18 +90,23 @@ productRouter.get("/page-products/:page", async (req, res) => {
 //! GET QUERY
 
 productRouter.get("/query/:query", async (req, res) => {
-  const query = req.query.query
-  res.send(await productManager.getProductQuery(query))
-})
+  const query = req.query.query;
+  res.send(await productManager.getProductQuery(query));
+});
 
 //!GET SORT
-// Para valores de mayor a menor, pasar el -1 , y para valores de menor a mayor pasar el 1 
+// Para valores de mayor a menor, pasar el -1 , y para valores de menor a mayor pasar el 1
 productRouter.get("/sort/:sort", async (req, res) => {
-  const sort = req.params.sort
-  const sortOrder = (parseInt(sort) === 1 || parseInt(sort) === -1) ? (parseInt(sort) === -1 ? "desc" : "asc") : "asc";
+  const sort = req.params.sort;
+  const sortOrder =
+    parseInt(sort) === 1 || parseInt(sort) === -1
+      ? parseInt(sort) === -1
+        ? "desc"
+        : "asc"
+      : "asc";
 
-  res.send(await productManager.getProductOrder(sortOrder))
-})
+  res.send(await productManager.getProductOrder(sortOrder));
+});
 
 //!!  UPDATE PRODUCT
 //Actualizar un producto
@@ -102,7 +117,6 @@ productRouter.put("/:idProduct", async (req, res) => {
   let result = await productManager.updateProduct(idProduct, productReplace);
   res.send({ status: "sucess", payload: result });
 });
-
 
 //!!  DELETE PRODUCT
 //Eliminar un producto

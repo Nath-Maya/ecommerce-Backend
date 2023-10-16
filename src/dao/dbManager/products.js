@@ -16,6 +16,13 @@ export default class Products {
     return result;
   };
 
+  getProductId = async (idProduct) => {
+    let result = await productModel.findById(idProduct);
+    console.log("\u001b[1;36m Producto Encontrado");
+    return result;
+  
+  }
+
   //! GET LIMIT
   //Definir el limite de productos a visualizar.
   getProductsLimit = async (limit) => {
