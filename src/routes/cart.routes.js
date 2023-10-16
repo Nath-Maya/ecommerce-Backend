@@ -6,24 +6,9 @@ const cartManager = new Cart();
 
 //**** POST */
 cartRouter.post("/", async (req, res) => {
-  
-  let { description, quantity, total } = req.body;
 
-  //Valido que los datos esten completos.
-  if (!description || !quantity || !total) {
-    res.send({ status: "error", error: "Faltan datos" });
-  }
-
-  const newCart = {
-    description: description,
-    quantity: quantity,
-    total: total,
-  };
-  let result = await cartManager.saveCart(newCart); //Creo el resultado en la base de datos.
-
-  console.log(result + "Datos Cargados");
-
-  res.send({ status: "success", payload: result });
+  let newCart = req.body
+  res.send(await cartManager.saveCart(newCart))
 });
 
 //**** GET */
