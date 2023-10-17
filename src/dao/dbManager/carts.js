@@ -153,4 +153,25 @@ export default class Cart {
       }
     }
   };
+
+  //! DELETE ALL PRODUCTS IN CART
+  //Eliminar todos los productos contenidos en un carrito
+
+  deleteAllProductsCart = async (idCart) => {
+    try {
+      const cart = await cartModel.findById(idCart);
+
+      if (!cart) {
+        return "Carrito no encontrado";
+      }
+      cart.products = [];
+
+      await cart.save();
+
+      return "Productos  eliminados del carrito";
+    } catch (error) {
+      console.error("Error:", error);
+      return "Error al eliminar los productos del carrito";
+    }
+  };
 }

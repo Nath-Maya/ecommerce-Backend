@@ -94,3 +94,10 @@ cartRouter.delete("/:idCart/products/:idProducts", async (req, res) => {
 });
 
 export default cartRouter;
+
+//! DELETE ALL PRODUCTS OF CART
+cartRouter.delete("/:idCart/products", async (req,res) => {
+  
+  let idCart = req.params.idCart;
+  res.send(await cartManager.deleteAllProductsCart(idCart))
+})
