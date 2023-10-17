@@ -4,14 +4,16 @@ import Cart from "../DAO/dbManager/carts.js";
 const cartRouter = Router(); //Crear enrutador
 const cartManager = new Cart();
 
-//**** POST CART*/
+//? ----------- Metodos Cart
+
+//* POST CART*/
 cartRouter.post("/", async (req, res) => {
 
   let newCart = req.body
   res.send(await cartManager.saveCart(newCart))
 });
 
-//**** GET CART*/
+//* GET CART*/
 cartRouter.get("/", async (req, res) => {
 
   try {
@@ -22,7 +24,7 @@ cartRouter.get("/", async (req, res) => {
   }
 });
 
-//**** GET CART BY ID */
+//* GET CART BY ID */
 cartRouter.get("/:idCart", async (req, res) => {
 
   let idCart = req.params.idCart;
@@ -34,7 +36,7 @@ cartRouter.get("/:idCart", async (req, res) => {
   }
 });
 
-//**** UPDATE CART*/
+//* UPDATE CART*/
 cartRouter.put("/:idCart", async (req, res) => {
 
   let { idCart } = req.params;
@@ -50,7 +52,7 @@ cartRouter.put("/:idCart", async (req, res) => {
   res.send({ status: "sucess", payload: result });
 });
 
-//**** DELETE CART */
+//* DELETE CART */
 cartRouter.delete("/:idCart", async (req,res) => {
 
   let idCart = req.params.idCart;
@@ -63,6 +65,8 @@ cartRouter.delete("/:idCart", async (req,res) => {
   }
 })
 
+//? ----------- Metodos Products in cart
+
 //! POST PRODUCT IN CART
 cartRouter.post("/:idCart/products/:idProducts", async (req,res) => {
   let idCart = req.params.idCart;
@@ -74,13 +78,15 @@ cartRouter.post("/:idCart/products/:idProducts", async (req,res) => {
 cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
   let idCart = req.params.idCart;
   let idProduct = req.params.idProduct;
-  let productUpdate = req.body;
-  res.send(await cartManager.updateProductCart(idCart, idProduct, productUpdate))
+  let newQuantity = req.body.quantity;
+
+  const result = await cartManager.updateProductCart(idCart, idProduct, newQuantity)
+  res.send({ result: "sucess", payload: result})
 })
 
 
 //! DELETE PRODUCT IN CART
-cartRouter.delete("/:idCart", async (req, res) => {
+cartRouter.delete("/:idCart/products/:idProducts", async (req, res) => {
 
   let idCart = req.params.idCart;
   let idProduct = req.params.idProduct;
