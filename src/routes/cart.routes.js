@@ -17,7 +17,7 @@ cartRouter.post("/", async (req, res) => {
 cartRouter.get("/", async (req, res) => {
 
   try {
-    let carts = await cartManager.getAllCart(); //Buscar en el modelo de usuario
+    let carts = await cartManager.getAllCart(); 
     res.send({ result: "sucess", payload: carts });
   } catch (error) {
     console.log("\u001b[1;34m Error al buscar carritos" + error);
@@ -61,7 +61,7 @@ cartRouter.delete("/:idCart", async (req,res) => {
     console.log("\u001b[1;34m Carrito eliminado" + error);
     res.send({ result: "sucess", payload: carts });
   } catch (error) {
-    console.log("\u001b[1;34m Error al eliminar carrito del carrito " + error);
+    console.log("\u001b[1;34m Error al eliminar carrito " + error);
   }
 })
 
@@ -71,7 +71,13 @@ cartRouter.delete("/:idCart", async (req,res) => {
 cartRouter.post("/:idCart/products/:idProducts", async (req,res) => {
   let idCart = req.params.idCart;
   let idProduct = req.params.idProducts;
-  res.send(await cartManager.insertProductCart(idCart, idProduct))
+  try {
+    let carts = await cartManager.insertProductCart(idCart, idProduct)
+    res.send({ result: "sucess", payload: carts})
+  } catch (error) {
+    console.log("\u001b[1;34m Error al insertar producto al carrito " + error);
+  }
+ 
 })
 
 //! UPDATE PRODUCT IN CART
@@ -80,6 +86,12 @@ cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
   let idProduct = req.params.idProduct;
   let newQuantity = req.body.quantity;
 
+  try {
+    const result = await cartManager.updateProductCart(idCart, idProduct, newQuantity)
+  res.send({ result: "sucess", payload: result})
+  } catch (error) {
+    console.log("\u001b[1;34m Error al actualizar cantidad de producto en el carrito " + error);
+  }
   const result = await cartManager.updateProductCart(idCart, idProduct, newQuantity)
   res.send({ result: "sucess", payload: result})
 })
@@ -97,7 +109,7 @@ export default cartRouter;
 
 //! DELETE ALL PRODUCTS OF CART
 cartRouter.delete("/:idCart/products", async (req,res) => {
-  
+
   let idCart = req.params.idCart;
   res.send(await cartManager.deleteAllProductsCart(idCart))
 })
