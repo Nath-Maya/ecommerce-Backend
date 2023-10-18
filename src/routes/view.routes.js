@@ -1,15 +1,25 @@
 import { Router } from "express";
 import Products from "../DAO/dbManager/products.js"
 
-const router = Router();
-
+const viewRouter = Router();
 
 const productsManager = new Products();
 
-router.get('/',async(req,res)=>{
+//! VISTA PRODUCTOS
+viewRouter.get('/',async(req,res)=>{
     let products = await productsManager.getAllProducts();
-    console.log(products);
-    res.render('chats',{products})
+    res.render('home',{products})
 })
 
-export default router;
+//! VISTA CHATS
+viewRouter.get('/chats',async(req,res)=>{
+    res.render('chats')
+})
+
+//!VISTA CARRITOS
+viewRouter.get('/carts', async (req,res) => {
+    res.render('carts')
+
+})
+
+export default viewRouter;
