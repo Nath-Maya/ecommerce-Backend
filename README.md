@@ -1,10 +1,12 @@
-# Proyecto de Backend
+# Backend / Ecommerce
 
 ### ☑️ Dependencias:
 
 - Node.js 
 - npm 
 - Express.js
+- Handlebars
+- Mongoose
 
 
 ### 💻 Instalación:
@@ -13,73 +15,53 @@
 
 ```shell
 git clone https://github.com/Nath-Maya/proyecto-Backend.git
-````
+```
 2. Navega hasta el directorio del proyecto.
+
 ```shell
-cd src/app.js
-````
+src/app.js
+```
 3. Instalar las dependencias para el servidor.
 ```shell
-npm install
-````
+npm i express
+npm i handlebars
+npm i mongoose
+```
 
 ### ▶️ Uso
 Para iniciar la aplicación, ejecuta el siguiente comando:
 ```shell
-npm start ./src/app.js
-````
+npm start 
+```
 
 ### 🌐 Servidor:
 
-✅    **Servidor:** Se levanta el servidor con *Express js*.
+✅    Se levanta el servidor con *Express js*.
 
-**Para realizar las consultas debe ser con el servidor:**
+Aplicacion debe abrirse en el puerto: 
 
-por medio del navegador consultando en el endpoint:
-```shell  
-http://localhost:8080/
-````
-
-✅    **Filtro por id:** Indicando un # de id  se puede visualizar el producto correspondiente al id. Ejemplo:
-
-```shell  
-http://localhost:8080/products/2
-````
-
-✅    **Definir el limit:** Estableciendo en la ruta un limit se puede visualizar la cantidad especificada en el navegador. 
-
-```shell  
-http://localhost:8080/products/?limit=3
-````
+#### `http://localhost:8080`
 
 ### 🔀 Rutas:
 
-1. Productos:
-```
-http://localhost:8080/api/products
-```
-2. Carritos:
-```
-http://localhost:8080/api/cart
-```
-## 🗂️ Estructura del proyecto:
+📍   **Consulta Productos:** 
 
+- ⚠️ GET `/products`: Obtiene la lista de productos.
+  - ⚠️ GET PRODUCT BY ID: `/products/:idProduct`: Obtiene un producto por su ID.
+- 📥 POST `/products`: Agrega un nuevo producto.
+- 🔃 PUT `/products/:idProduct` Actualiza un producto existente por su ID.
+- ❌ DELETE `/products/:idProduct`: Elimina un producto indicandole su ID.
 
-📂-- src/
--   📁--- controllers/
--------📄 CartManager.js
--------📄 ProductManager.js
--   📁--- models/
--------📄 carts.json
--------📄 products.json
--   📁--- public/
--   📁--- router/
--------📄 cart.routes.js
--------📄 product.router.js
-🔐 LICENSE
-📒 app.js
-📄 README.md
-📄 package.json
+📍   **Consulta Carritos:** 
+
+- ⚠️ GET `/cart`: Obtiene la lista de carritos creados.
+  - ⚠️ GET CART BY ID`/cart/:idCart`: Obtiene un carrito por su ID.
+- 📥 POST `/cart`: Agrega un nuevo carrito.
+  - 📥 POST PRODUCT IN CART `/cart/:idCart/products/:idProduct`: Agrega un nuevo producto a determinado carrito.
+- 🔃 PUT `/cart/:idCart` Actualiza un carrito existente por su ID.
+  - 🔃 PUT QUANTITY PRODUCT `/cart/:idCart/products/:idProduct` Actualiza la cantidad de un producto contenido en un carrito
+- ❌ DELETE `/cart/:idCart`: Elimina un carrito indicandole su ID.
+  - ❌ DELETE PRODUCT IN CART `/cart/:idCart/products/:idProduct`: Elimina un producto de un carrito, indicandole su ID.
 
 
 
