@@ -19,6 +19,8 @@
       <p> {{this.category}} </p>
       <p> {{this.stock}} </p>
       <img src="{{this.image}}" alt="" />
+      <button class="btn-addCart" data-product-id="{{this._id}}">Agregar al carrito</button>
+      <a href="/product/{{this._id}}">Ver detalles</a>
    </div>
    {{/each}}
 </body>

@@ -22,15 +22,11 @@ viewRouter.get("/carts", async (req, res) => {
 });
 
 //? VISTA DETAIL PRODUCT
-viewRouter.get("/product/:idProduct", async(req, res) => {
-    let idProduct  = req.params.idProduct;
-    try {
-      let result = await productManager.getProductId(idProduct);
-      res.render('product', result)
-    } catch (error) {
-      console.error("Producto no encontrado");
-    }
-})
+viewRouter.get("/product/:idProduct", async (req, res) => {
+  let idProduct = req.params.idProduct;
 
+  let result = await productManager.getProductId(idProduct);
+  res.render("product", result);
+});
 
 export default viewRouter;
