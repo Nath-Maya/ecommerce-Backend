@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import { nanoid } from "nanoid";
-import cartModel from "../DAO/models/carts.model.js";
+import cartModel from "../models/carts.model.js"
 import ProductManager from "./ProductManager.js";
 
 const totalProduct = new ProductManager();

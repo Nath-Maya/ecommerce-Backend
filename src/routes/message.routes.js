@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Message from "../DAO/dbManager/messages.js";
+import Message from "../dao/messages.js";
 import viewRouter from "./view.routes.js";
 
 const messageRouter = Router();
