@@ -23,6 +23,7 @@ sessionRouter.post("/register", async (req, res) => {
     email,
     age,
     password,
+    rol
   };
 
   //Pasamos el user al model por medio del create.
@@ -44,7 +45,7 @@ sessionRouter.post("/login", async (req, res) => {
   req.session.user = {
     name: `${user.first_name} ${user.last_name}`,
     email: user.email,
-    age: user.age,
+    rol: user.rol
   };
 
   res.send({
