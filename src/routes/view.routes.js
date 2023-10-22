@@ -29,4 +29,19 @@ viewRouter.get("/product/:idProduct", async (req, res) => {
   res.render("product", result);
 });
 
+//* VISTA REGISTRO Y LOGIN
+viewRouter.get("/register", (req, res) => {
+  res.render("register");
+});
+
+viewRouter.get("/login", (req, res) => {
+  res.render("login");
+});
+
+viewRouter.get("/", (req, res) => {
+  res.render("profile", {
+    user: req.session.user,
+  });
+});
+
 export default viewRouter;
