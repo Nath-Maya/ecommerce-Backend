@@ -11,7 +11,7 @@ import cartRouter from "./routes/cart.routes.js";
 import productRouter from "./routes/product.routes.js";
 import viewsRouter from "./routes/view.routes.js";
 import messageRouter from "./routes/message.routes.js";
-import sessionRouter from "./routes/sessions.router.js"
+import sessionRouter from "./routes/sessions.routes.js"
 
 
 //!**** SERVER

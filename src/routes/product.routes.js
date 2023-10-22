@@ -23,7 +23,7 @@ productRouter.post("/", async (req, res) => {
 
 //!!  GET PRODUCTS
 // Consulta de todos los productos con límite opcional
-productRouter.get("/", async (req, res) => {
+productRouter.get("/products", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = 10;
