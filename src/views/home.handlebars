@@ -9,6 +9,15 @@
 </head>
 
 <body>
+   <div>
+      <h1>Bienvenido !</h1>
+      {{#each user}}
+      <p>{{user.name}}</p>
+      <p>{{user.email}}</p>
+      <p>{{user.rol}}</p>
+      {{/each}}
+      <h3><a href="/session/logout">Cerrar sesión</a></h3>
+   </div>
    <h1>Lista de productos</h1>
    {{#each products}}
    <div class="card-product">
