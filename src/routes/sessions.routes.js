@@ -6,7 +6,7 @@ const router = Router();
 //!REGISTER USER
 router.post("/register", async (req, res) => {
   //construccion del cuerpo del registro
-  const { first_name, last_name, email, age, password } = req.body;
+  const { first_name, last_name, email, age, password, rol } = req.body;
   //validacion e identificacion dentro del model creado.
   const exist = await userModel.findOne({ email });
 
@@ -53,5 +53,17 @@ router.post("/login", async (req, res) => {
     message: "Nuestro primer logueo",
   });
 });
+
+//! LOGOUT
+router.get("/logout", async (req,res) => {
+  req.session.destroy((error) =>{
+    if(error)
+    {
+        return res.json({ status: 'Logout Error', body: error})
+    }
+    res.redirect('../../login')
+})    
+
+})
 
 export default router;

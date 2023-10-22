@@ -1,11 +1,11 @@
 <div>
     <h1>Login</h1>
-    <form id="loginForm">
+    <form id="loginForm" method="POST" action="/api/sessions/login">
         <label>Email</label>
-        <input name="email">
+        <input name="email" type="email" required>
         <br/>
         <label>Contraseña</label>
-        <input type="password" name="password">
+        <input type="password" name="password" required>
         <input type="submit">
     </form>
     <p>¿No estás registrado? <a href="/register">Regístrate aquí</a></p>

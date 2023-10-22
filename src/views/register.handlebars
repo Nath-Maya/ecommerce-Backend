@@ -1,6 +1,6 @@
 <div>
     <h1>Registro</h1>
-    <form id="registerForm">
+    <form id="registerForm" method="POST" action="/api/sessions/register">
 
         <label>Nombre</label>
         <input name="first_name">
@@ -16,6 +16,9 @@
         <br />
         <label>Contraseña</label>
         <input type="password" name="password">
+        <br/>
+        <label for="rol">Rol</label>
+        <input type="rol" name="rol">
 
         <input type="submit">
     </form>
