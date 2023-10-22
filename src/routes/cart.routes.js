@@ -8,16 +8,14 @@ const cartManager = new Cart();
 
 //* POST CART*/
 cartRouter.post("/", async (req, res) => {
-
-  let newCart = req.body
-  res.send(await cartManager.saveCart(newCart))
+  let newCart = req.body;
+  res.send(await cartManager.saveCart(newCart));
 });
 
 //* GET CART*/
 cartRouter.get("/", async (req, res) => {
-
   try {
-    let carts = await cartManager.getAllCart(); 
+    let carts = await cartManager.getAllCart();
     res.send({ result: "sucess", payload: carts });
   } catch (error) {
     console.log("\u001b[1;34m Error al buscar carritos" + error);
@@ -26,19 +24,17 @@ cartRouter.get("/", async (req, res) => {
 
 //* GET CART BY ID */
 cartRouter.get("/:idCart", async (req, res) => {
-
   let idCart = req.params.idCart;
   try {
     let carts = await cartManager.getCartId(idCart);
     res.send({ result: "sucess", payload: carts });
   } catch (error) {
-    console.log("\u001b[1;34m Carrito no encontrado" + error)
+    console.log("\u001b[1;34m Carrito no encontrado" + error);
   }
 });
 
 //* UPDATE CART*/
 cartRouter.put("/:idCart", async (req, res) => {
-
   let { idCart } = req.params;
   let cartsToReplace = req.body;
   if (
@@ -53,8 +49,7 @@ cartRouter.put("/:idCart", async (req, res) => {
 });
 
 //* DELETE CART */
-cartRouter.delete("/:idCart", async (req,res) => {
-
+cartRouter.delete("/:idCart", async (req, res) => {
   let idCart = req.params.idCart;
   try {
     let carts = await cartManager.deleteCart(idCart);
@@ -63,22 +58,21 @@ cartRouter.delete("/:idCart", async (req,res) => {
   } catch (error) {
     console.log("\u001b[1;34m Error al eliminar carrito " + error);
   }
-})
+});
 
 //? ----------- Metodos Products in cart
 
 //! POST PRODUCT IN CART
-cartRouter.post("/:idCart/products/:idProducts", async (req,res) => {
+cartRouter.post("/:idCart/products/:idProducts", async (req, res) => {
   let idCart = req.params.idCart;
   let idProduct = req.params.idProducts;
   try {
-    let carts = await cartManager.insertProductCart(idCart, idProduct)
-    res.send({ result: "sucess", payload: carts})
+    let carts = await cartManager.insertProductCart(idCart, idProduct);
+    res.send({ result: "sucess", payload: carts });
   } catch (error) {
     console.log("\u001b[1;34m Error al insertar producto al carrito " + error);
   }
- 
-})
+});
 
 //! UPDATE PRODUCT IN CART
 cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
@@ -87,19 +81,28 @@ cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
   let newQuantity = req.body.quantity;
 
   try {
-    const result = await cartManager.updateProductCart(idCart, idProduct, newQuantity)
-  res.send({ result: "sucess", payload: result})
+    const result = await cartManager.updateProductCart(
+      idCart,
+      idProduct,
+      newQuantity
+    );
+    res.send({ result: "sucess", payload: result });
   } catch (error) {
-    console.log("\u001b[1;34m Error al actualizar cantidad de producto en el carrito " + error);
+    console.log(
+      "\u001b[1;34m Error al actualizar cantidad de producto en el carrito " +
+        error
+    );
   }
-  const result = await cartManager.updateProductCart(idCart, idProduct, newQuantity)
-  res.send({ result: "sucess", payload: result})
-})
-
+  const result = await cartManager.updateProductCart(
+    idCart,
+    idProduct,
+    newQuantity
+  );
+  res.send({ result: "sucess", payload: result });
+});
 
 //! DELETE PRODUCT IN CART
 cartRouter.delete("/:idCart/products/:idProducts", async (req, res) => {
-
   let idCart = req.params.idCart;
   let idProduct = req.params.idProduct;
   res.send(await cartManager.deleteProductCart(idCart, idProduct));
@@ -108,8 +111,7 @@ cartRouter.delete("/:idCart/products/:idProducts", async (req, res) => {
 export default cartRouter;
 
 //! DELETE ALL PRODUCTS OF CART
-cartRouter.delete("/:idCart/products", async (req,res) => {
-
+cartRouter.delete("/:idCart/products", async (req, res) => {
   let idCart = req.params.idCart;
-  res.send(await cartManager.deleteAllProductsCart(idCart))
-})
+  res.send(await cartManager.deleteAllProductsCart(idCart));
+});
