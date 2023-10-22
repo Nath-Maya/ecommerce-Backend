@@ -34,11 +34,11 @@ viewRouter.get("/register", (req, res) => {
   res.render("register");
 });
 
-viewRouter.get("/login", (req, res) => {
+viewRouter.get("/", (req, res) => {
   res.render("login");
 });
 
-viewRouter.get("/", (req, res) => {
+viewRouter.get("/profile", (req, res) => {
   res.render("profile", {
     user: req.session.user,
   });
