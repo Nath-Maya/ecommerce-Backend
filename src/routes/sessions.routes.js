@@ -61,7 +61,7 @@ sessionRouter.get("/logout", async (req,res) => {
     {
         return res.json({ status: 'Logout Error', body: error})
     }
-    res.redirect('/login')
+    res.redirect('/')
 })    
 
 })
