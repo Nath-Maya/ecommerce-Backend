@@ -34,7 +34,7 @@ viewRouter.get("/register", (req, res) => {
   res.render("register");
 });
 
-viewRouter.get("/", (req, res) => {
+viewRouter.get("/login", (req, res) => {
   res.render("login");
 });
 

@@ -1,10 +1,10 @@
 import { Router } from "express";
 import userModel from "../models/users.model.js";
 
-const router = Router();
+const sessionRouter = Router();
 
 //!REGISTER USER
-router.post("/register", async (req, res) => {
+sessionRouter.post("/register", async (req, res) => {
   //construccion del cuerpo del registro
   const { first_name, last_name, email, age, password, rol } = req.body;
   //validacion e identificacion dentro del model creado.
@@ -31,7 +31,7 @@ router.post("/register", async (req, res) => {
 });
 
 //! LOGIN
-router.post("/login", async (req, res) => {
+sessionRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   //Validacion del password ingresado
   const user = await userModel.findOne({ email, password });
@@ -55,15 +55,15 @@ router.post("/login", async (req, res) => {
 });
 
 //! LOGOUT
-router.get("/logout", async (req,res) => {
+sessionRouter.get("/logout", async (req,res) => {
   req.session.destroy((error) =>{
     if(error)
     {
         return res.json({ status: 'Logout Error', body: error})
     }
-    res.redirect('../../login')
+    res.redirect('./login')
 })    
 
 })
 
-export default router;
+export default sessionRouter;
