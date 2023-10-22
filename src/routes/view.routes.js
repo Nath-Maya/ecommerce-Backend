@@ -6,7 +6,7 @@ const viewRouter = Router();
 const productManager = new Products();
 
 //! VISTA PRODUCTS
-viewRouter.get("/", async (req, res) => {
+viewRouter.get("/products", async (req, res) => {
   let products = await productManager.getAllProducts();
   res.render("home", { products });
 });
@@ -34,7 +34,7 @@ viewRouter.get("/register", (req, res) => {
   res.render("register");
 });
 
-viewRouter.get("/login", (req, res) => {
+viewRouter.get("/", (req, res) => {
   res.render("login");
 });
 
