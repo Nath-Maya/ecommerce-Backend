@@ -16,6 +16,64 @@ export default class Products {
     return result;
   };
 
+  getProductId = async (idProduct) => {
+    let result = await productModel.findById(idProduct);
+    console.log("\u001b[1;36m Producto Encontrado");
+    return result;
+  
+  }
+
+  //! GET LIMIT
+  //Definir el limite de productos a visualizar.
+  getProductsLimit = async (limit) => {
+    try {
+      const products = await productModel.find().limit(limit);
+      limit = products.length < limit ? products.length : limit;
+
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  //! GET PAGE
+  //Mostrar el listado de productos de la pagina solicitada
+  getProductsPage = async (page, productByPage) => {
+    page = page <= 0 ? 1 : page;
+    try {
+      const products = await productModel
+        .find()
+        .skip((page - 1) * productByPage)
+        .limit(productByPage);
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  //! GET QUERY
+  //Mostrar un documento que cumpla con el parametro solicitado.
+  getProductQuery = async (query) => {
+    try {
+      const products = await productModel.find({
+        description: { $regex: query, $options: "i" },
+      });
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  //! GET SORT
+  //Ordenar los productos por precio
+  getProductOrder = async (sort) => {
+    try {
+      const products = await productModel.find().sort({ price: sort });
+      return products;
+    } catch (error) {
+      throw new Error(`Error al ordenar productos: ${error.message}`);
+    }
+  };
 
   //!   PUT
   updateProduct = async (idProduct, product) => {

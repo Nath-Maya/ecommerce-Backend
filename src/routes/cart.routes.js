@@ -1,42 +1,44 @@
 import { Router } from "express";
-import Cart from "../dao/dbManager/carts.js";
+import Cart from "../DAO/dbManager/carts.js";
 
 const cartRouter = Router(); //Crear enrutador
 const cartManager = new Cart();
 
-//**** POST */
+//? ----------- Metodos Cart
+
+//* POST CART*/
 cartRouter.post("/", async (req, res) => {
-  let { description, quantity, total } = req.body;
 
-  //Valido que los datos esten completos.
-  if (!description || !quantity || !total) {
-    res.send({ status: "error", error: "Faltan datos" });
-  }
-
-  //**** GET */
-  cartRouter.get("/", async (req, res) => {
-    try {
-      let users = await cartManager.getAllCart(); //Buscar en el modelo de usuario
-      res.send({ result: "sucess", payload: users });
-    } catch (error) {
-      console.log("\u001b[1;34m" + error);
-    }
-  });
-
-  const newCart = {
-    description: description,
-    quantity: quantity,
-    total: total,
-  };
-  let result = await cartManager.saveCart(newCart); //Creo el resultado en la base de datos.
-
-  console.log(result + "Datos Cargados");
-
-  res.send({ status: "success", payload: result });
+  let newCart = req.body
+  res.send(await cartManager.saveCart(newCart))
 });
 
-//**** UPDATE */
+//* GET CART*/
+cartRouter.get("/", async (req, res) => {
+
+  try {
+    let carts = await cartManager.getAllCart(); 
+    res.send({ result: "sucess", payload: carts });
+  } catch (error) {
+    console.log("\u001b[1;34m Error al buscar carritos" + error);
+  }
+});
+
+//* GET CART BY ID */
+cartRouter.get("/:idCart", async (req, res) => {
+
+  let idCart = req.params.idCart;
+  try {
+    let carts = await cartManager.getCartId(idCart);
+    res.send({ result: "sucess", payload: carts });
+  } catch (error) {
+    console.log("\u001b[1;34m Carrito no encontrado" + error)
+  }
+});
+
+//* UPDATE CART*/
 cartRouter.put("/:idCart", async (req, res) => {
+
   let { idCart } = req.params;
   let cartsToReplace = req.body;
   if (
@@ -50,11 +52,64 @@ cartRouter.put("/:idCart", async (req, res) => {
   res.send({ status: "sucess", payload: result });
 });
 
-//**** DELETE */
-cartRouter.delete("/:idCart", async (req, res) => {
+//* DELETE CART */
+cartRouter.delete("/:idCart", async (req,res) => {
+
   let idCart = req.params.idCart;
-  let result = await cartManager.deleteCart(idCart);
-  res.send("Carro Eliminado");
+  try {
+    let carts = await cartManager.deleteCart(idCart);
+    console.log("\u001b[1;34m Carrito eliminado" + error);
+    res.send({ result: "sucess", payload: carts });
+  } catch (error) {
+    console.log("\u001b[1;34m Error al eliminar carrito " + error);
+  }
+})
+
+//? ----------- Metodos Products in cart
+
+//! POST PRODUCT IN CART
+cartRouter.post("/:idCart/products/:idProducts", async (req,res) => {
+  let idCart = req.params.idCart;
+  let idProduct = req.params.idProducts;
+  try {
+    let carts = await cartManager.insertProductCart(idCart, idProduct)
+    res.send({ result: "sucess", payload: carts})
+  } catch (error) {
+    console.log("\u001b[1;34m Error al insertar producto al carrito " + error);
+  }
+ 
+})
+
+//! UPDATE PRODUCT IN CART
+cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
+  let idCart = req.params.idCart;
+  let idProduct = req.params.idProduct;
+  let newQuantity = req.body.quantity;
+
+  try {
+    const result = await cartManager.updateProductCart(idCart, idProduct, newQuantity)
+  res.send({ result: "sucess", payload: result})
+  } catch (error) {
+    console.log("\u001b[1;34m Error al actualizar cantidad de producto en el carrito " + error);
+  }
+  const result = await cartManager.updateProductCart(idCart, idProduct, newQuantity)
+  res.send({ result: "sucess", payload: result})
+})
+
+
+//! DELETE PRODUCT IN CART
+cartRouter.delete("/:idCart/products/:idProducts", async (req, res) => {
+
+  let idCart = req.params.idCart;
+  let idProduct = req.params.idProduct;
+  res.send(await cartManager.deleteProductCart(idCart, idProduct));
 });
 
 export default cartRouter;
+
+//! DELETE ALL PRODUCTS OF CART
+cartRouter.delete("/:idCart/products", async (req,res) => {
+
+  let idCart = req.params.idCart;
+  res.send(await cartManager.deleteAllProductsCart(idCart))
+})

@@ -1,17 +1,32 @@
 import { promises as fs } from "fs";
 import { nanoid } from "nanoid";
+import cartModel from "../DAO/models/carts.model.js";
 import ProductManager from "./ProductManager.js";
 
 const totalProduct = new ProductManager();
 
-class CartManager {
+class CartManager extends cartModel {
   constructor() {
-    this.cartFilePath = "./src/models/carts.json";
+    super();
   }
 
+  //? ---- READ CART
   async readCart() {
-    let carts = await fs.readFile(this.cartFilePath, "utf-8"); //Leer los arreglos en el arreglo de productos
-    return JSON.parse(carts);
+    try {
+      let carts = await CartManager.find({}).populate({
+        path: "products.productId",
+        model: "products",
+        select: "description price image stock",
+      });
+      return carts;
+    } catch (error) {
+      console.log("\u001b[1;36m Error al obtener carritos: ", error);
+      return [];   
+    }
+  }
+
+  async addCart(dataCart) {
+    
   }
 
   async writeCart(cart) {
@@ -23,14 +38,7 @@ class CartManager {
     return carts.find((cart) => cart.id === id);
   }
 
-  async addCart() {
-    let previousCart = await this.readCart();
-    let id = nanoid(5);
-    let fullCart = [{ id: id, products: []}, ...previousCart];
-    await this.writeCart(fullCart);
-    console.log( "\u001b[1;33m Carrito agregado" );
-    return "Carrito agregado";
-  }
+ 
 
   async getCartd(id) {
     let cartId = await this.existId(id);
@@ -38,19 +46,20 @@ class CartManager {
     return cartId;
   }
 
-
   async addProductCart(cartId, productId) {
     const cartById = await this.existId(cartId);
     if (!cartById) return "Carrito no encontrado";
-    
+
     const productById = await totalProduct.existId(productId);
     if (!productById) return "Producto no encontrado";
-  
+
     const allCart = await this.readCart();
-  
+
     for (const cartItem of allCart) {
       if (cartItem.id === cartId) {
-        const existingProduct = cartItem.products.find((product) => product.id === productId);
+        const existingProduct = cartItem.products.find(
+          (product) => product.id === productId
+        );
         if (existingProduct) {
           existingProduct.quantity++;
         } else {
@@ -58,14 +67,11 @@ class CartManager {
         }
       }
     }
-  
+
     await this.writeCart(allCart);
-    console.log( "\u001b[1;36m Producto agregado al carrito" )
+    console.log("\u001b[1;36m Producto agregado al carrito");
     return "Producto agregado al carrito";
   }
-  
-  
-  
 }
 
 export default CartManager;

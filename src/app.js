@@ -1,13 +1,14 @@
 import express from "express";
 import mongoose from "mongoose";
-import cartRouter from "./routes/cart.routes.js"
+import cartRouter from "./routes/cart.routes.js";
 import productRouter from "./routes/product.routes.js";
-import __dirname from "./utils.js"
-import handlebars from 'express-handlebars';
-import viewsRouter from "./routes/view.routes.js"
-import messageRouter from "./routes/message.routes.js"
+import __dirname from "./utils.js";
+import handlebars from "express-handlebars";
+import viewsRouter from "./routes/view.routes.js";
+import messageRouter from "./routes/message.routes.js";
 
 
+//Inicializar variables del Servidor
 const app = express();
 const PORT = 8080;
 
@@ -15,8 +16,7 @@ const PORT = 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-//**** CONECT DATABASE  */
+//!**** CONECT DATABASE  */
 
 mongoose
   .connect(
@@ -29,22 +29,22 @@ mongoose
     console.error("\u001b[1;31m Connection failed at the database" + error);
   });
 
-
-//Rutas para verificar funcionamiento de CRUD con thunderclient
-app.use("/products", productRouter);
-app.use("/cart", cartRouter);
-app.use('/',viewsRouter)
-app.use("/message", messageRouter);
-
 //**** HANDLEBARS */
 
-app.engine('handlebars',handlebars.engine());
-app.set('views',__dirname+'/views');
-app.set('view engine','handlebars');
+app.engine("handlebars", handlebars.engine());
+app.set("views", __dirname + "/views");
+app.set("view engine", "handlebars");
+
+
+//? **** RUTAS CRUD - THUNDERCLIENT
+
+app.use("/products", productRouter);
+app.use("/cart", cartRouter);
+app.use("/", viewsRouter);
+app.use("/message", messageRouter);
 
 
 //**** UP SERVER  */
 app.listen(PORT, () => {
   console.log("\u001b[1;35m Up Server: " + PORT);
 });
-
