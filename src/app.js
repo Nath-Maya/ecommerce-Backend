@@ -27,7 +27,7 @@ const fileStorage = FileStore(session)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //middleware
-app.use(express.static(__dirname + "/public")); //Rutas
+app.use(express.static(__dirname + '/public')); //Rutas
 
 //!**** CONECT DATABASE  */
 //Validar conexion a la base de datos
@@ -69,7 +69,7 @@ app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use("/", viewsRouter);
 app.use("/message", messageRouter);
-app.use("/sessions", sessionRouter);
+app.use("/session", sessionRouter);
 
 //**** UP SERVER  */
 app.listen(PORT, () => {

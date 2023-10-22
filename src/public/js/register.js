@@ -7,13 +7,21 @@ form.addEventListener("submit", (e) => {
   const obj = {};
   data.forEach((value, key) => (obj[key] = value));
 
-  fetch("/api/sessions/register", {
+  fetch("/session/register", {
     method: "POST",
     body: JSON.stringify(obj),
     headers: {
       "Content-Type": "application/json",
     },
   })
-    .then((result) => result.json())
-    .then((json) => console.log(json));
+    // .then((result) => result.json())
+    // .then((json) => console.log(json));
+    .then((result) => {
+      if (result.status === 404) {
+        throw new Error("Ruta no encontrada en el servidor");
+      }
+      return result.json();
+    })
+    .then((json) => console.log(json))
+    .catch((error) => console.error(error));
 });
