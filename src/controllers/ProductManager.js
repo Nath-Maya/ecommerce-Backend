@@ -26,16 +26,6 @@ class ProductManager {
 
   //? Agrega el producto al arreglo del archivo.
 
-  /*
-  async addProduct(product) {
-    let previousProducts = await this.readProducts();
-    product.id = nanoid(5); //El numero que entra como parametro determina la cant de digitos del id.
-    let allProducts = [...previousProducts, product];
-    await this.writeProducts(allProducts);
-    console.log( "\u001b[1;36m Producto agregado" )
-    return "Producto agregado";
-  }
-  */
 
   async addProduct(product) {
     try {
