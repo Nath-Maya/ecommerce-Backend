@@ -8,7 +8,7 @@ const productManager = new Products();
 //! VISTA PRODUCTS
 viewRouter.get("/products", async (req, res) => {
   let products = await productManager.getAllProducts();
-  res.render("home", { products });
+  res.render("home", {  products });
 });
 
 //! VISTA CHATS
