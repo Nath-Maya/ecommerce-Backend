@@ -1,5 +1,5 @@
 import { Router } from "express";
-import userModel from "../DAO/models/user.model.js";
+import userModel from "../dao/models/users.model.js";
 
 const router = Router();
 
