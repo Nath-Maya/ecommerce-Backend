@@ -14,7 +14,8 @@ import cartRouter from "./routes/cart.routes.js";
 import productRouter from "./routes/product.routes.js";
 import viewsRouter from "./routes/view.routes.js";
 import messageRouter from "./routes/message.routes.js";
-import sessionRouter from "./routes/sessions.routes.js"
+import sessionRouter from "./routes/sessions.routes.js";
+import usersRouter from "./routes/users.routes.js";
 
 
 //!**** SERVER
@@ -70,6 +71,7 @@ app.use("/cart", cartRouter);
 app.use("/", viewsRouter);
 app.use("/message", messageRouter);
 app.use("/session", sessionRouter);
+app.use("/users", usersRouter)
 
 //**** UP SERVER  */
 app.listen(PORT, () => {

@@ -1,13 +1,16 @@
 import { Router } from "express";
 import userModel from "../models/users.model.js";
+import { createHash, isValidPassword } from "../utils.js";
 
 const sessionRouter = Router();
 
 //!REGISTER USER
 sessionRouter.post("/register", async (req, res) => {
-  //construccion del cuerpo del registro
-  const { first_name, last_name, email, age, password, rol } = req.body;
-  //validacion e identificacion dentro del model creado.
+  const { first_name, last_name, email, age, password, rol } = req.body; //construccion del cuerpo del registro
+  //Validar el ingreso de los datos
+  if (!first_name || !last_name || !email || !age)
+    return res.status(400).send({ status: "error", error: "Error user " });
+
   const exist = await userModel.findOne({ email });
 
   //Error si existe un usuario con el mismo email
@@ -16,14 +19,15 @@ sessionRouter.post("/register", async (req, res) => {
       .status(400)
       .send({ status: "error", error: "Users already exist" });
 
-  //Luego de la validacion inicializo y creo
+  //Luego de la validacion inicializo y creo el usuario.
+  //El password hasheado
   const user = {
     first_name,
     last_name,
     email,
     age,
-    password,
-    rol
+    password: createHash(password),
+    rol,
   };
 
   //Pasamos el user al model por medio del create.
@@ -45,7 +49,7 @@ sessionRouter.post("/login", async (req, res) => {
   req.session.user = {
     name: `${user.first_name} ${user.last_name}`,
     email: user.email,
-    rol: user.rol
+    rol: user.rol,
   };
 
   res.send({
@@ -56,15 +60,13 @@ sessionRouter.post("/login", async (req, res) => {
 });
 
 //! LOGOUT
-sessionRouter.get("/logout", async (req,res) => {
-  req.session.destroy((error) =>{
-    if(error)
-    {
-        return res.json({ status: 'Logout Error', body: error})
+sessionRouter.get("/logout", async (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      return res.json({ status: "Logout Error", body: error });
     }
-    res.redirect('/')
-})    
-
-})
+    res.redirect("/");
+  });
+});
 
 export default sessionRouter;
