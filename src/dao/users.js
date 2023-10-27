@@ -1,7 +1,7 @@
 import userModel from "../models/users.model.js";
 
 export default class Users {
-   constructor()
+   constructor() {}
 
    //!   GET USERS
    getAllUsers = async () => {
