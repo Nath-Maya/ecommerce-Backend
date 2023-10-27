@@ -1,6 +1,6 @@
 ## REFACTOR DEL LOGIN
 
-- Se deberá contar con un hasheo de contraseña utilizando bcrypt   
+- ✅ Se deberá contar con un hasheo de contraseña utilizando bcrypt   
 
    - **Password sin hash**
 
