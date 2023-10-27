@@ -16,6 +16,13 @@ form.addEventListener("submit", (e) => {
   }).then((result) => {
     if (result.status === 200) {
       window.location.replace("/products");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Error User!",
+        footer: '<a href="/register">Registrese aqui</a>',
+      });
     }
   });
 });

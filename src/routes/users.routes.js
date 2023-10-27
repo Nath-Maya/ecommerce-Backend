@@ -26,7 +26,7 @@ usersRouter.get("/:idUser", async (req, res) => {
 //!   DELETE USER
 //Eliminar un usuario con el id.
 usersRouter.delete("/:idUser", async (req, res) => {
-  let idUser = req.params.idUser;
+  let { idUser } = req.params;
   let result = await userManager.deleteUser(idUser);
   res.send("User deleted");
 });

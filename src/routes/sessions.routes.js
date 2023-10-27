@@ -39,24 +39,25 @@ sessionRouter.post("/register", async (req, res) => {
 sessionRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   //Validacion del password ingresado
-  const user = await userModel.findOne({ email, password });
+  if (!email || !password) {
+    return res.status(400).send({ status: "error", error: "Error User" });
+  }
+  const user = await userModel.findOne(
+    { email: email },
+    { email: 1, first_name: 1, last_name: 1, password: 1 }
+  );
 
-  if (!user)
-    return res
-      .status(400)
-      .send({ status: "error", error: "Incorrect credentials" });
+  if (!user) {
+    return res.status(400).send({ status: "error", error: "Error User" });
+  }
 
-  req.session.user = {
-    name: `${user.first_name} ${user.last_name}`,
-    email: user.email,
-    rol: user.rol,
-  };
+  if (!isValidPassword(user, password)) {
+    return res.send({ status: "error", error: "Error Credentials" });
+  }
 
-  res.send({
-    status: "sucess",
-    payload: req.session.user,
-    message: "Nuestro primer logueo",
-  });
+
+  req.session.user = user;
+  res.send({ status: "success", payload: user });
 });
 
 //! LOGOUT
