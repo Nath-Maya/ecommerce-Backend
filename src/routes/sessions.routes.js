@@ -1,6 +1,12 @@
 import { Router } from "express";
 import userModel from "../models/users.model.js";
-import { createHash, isValidPassword } from "../utils.js";
+import {
+  createHash,
+  isValidPassword,
+  authorizedToken,
+  generateToken,
+} from "../utils.js";
+import passport from "passport";
 
 const sessionRouter = Router();
 
@@ -31,13 +37,14 @@ sessionRouter.post("/register", async (req, res) => {
   };
 
   if (email == "adminCoder@coder.com" && password == "adminCod3r123")
-  user.rol = "admin";
+    user.rol = "admin";
   //Pasamos el user al model por medio del create.
   let result = await userModel.create(user);
   res.send({ status: "sucess", message: "User registered" });
 });
 
 //! LOGIN
+/*
 sessionRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   //Validacion del password ingresado
@@ -61,6 +68,30 @@ sessionRouter.post("/login", async (req, res) => {
   req.session.user = user;
   res.send({ status: "success", payload: user });
 });
+*/
+
+sessionRouter.post(
+  "/login",
+  passport.authenticate("login", {
+    passReqToCallback: true,
+    session: false,
+    failureRedirect: "/failedLogin",
+    failureMessage: true,
+  }),
+  (req, res) => {
+    const serialUser = {
+      id: req.user._id,
+      name: `${req.user.first_name}`,
+      rol: req.user.rol,
+      email: req.user.email,
+    };
+    req.session.user = serialUser;
+    const access_token = generateToken(serialUser);
+    res
+      .cookie("access_token", access_token, { maxAge: 36000000 })
+      .send({ status: "success", payload: serialUser, token: access_token });
+  }
+);
 
 //! LOGOUT
 sessionRouter.get("/logout", async (req, res) => {
@@ -70,6 +101,92 @@ sessionRouter.get("/logout", async (req, res) => {
     }
     res.redirect("/");
   });
+});
+
+//! FAILED LOGIN
+sessionRouter.get("/failedLogin", (req, res) => {
+  console.log("failed login");
+  res.send({ status: "error", message: "failed login" });
+});
+
+//***************** */ LOGIN GITHUB
+
+sessionRouter.post(
+  "/registerGit",
+  passport.authenticate("registerGithub", { failureRedirect: "/failregister" }),
+  async (req, res) => {
+    res.send({ status: "success", message: "User Register" });
+  }
+);
+
+sessionRouter.get("/failregister", async (req, res) => {
+  res.send({ error: "failed" });
+});
+
+sessionRouter.post(
+  "/loginGit",
+  passport.authenticate("loginGithub", { failureRedirect: "/faillogin" }),
+  async (req, res) => {
+    console.log("Testing entry to the strategy");
+
+    const { email, password } = req.body;
+
+    if (!req.user)
+      return res
+        .status(400)
+        .send({ status: "error", error: "Incorrect Password" });
+
+    req.session.user = {
+      first_name: req.user.first_name,
+      last_name: req.user.last_name,
+      age: req.user.age,
+      email: req.user.email,
+    };
+    res.send({ status: "success", payload: req.user });
+  }
+);
+
+sessionRouter.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"] }),
+  async (req, res) => {}
+);
+
+sessionRouter.get(
+  "/githubcallback",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  async (req, res) => {
+    req.session.user = req.user;
+
+    res.redirect("/products");
+  }
+);
+
+sessionRouter.post("/reset", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return res.status(404).send({
+      status: "error",
+      error_description: "All fields are required",
+    });
+
+  const user = await userModel.findOne({ email: email });
+
+  if (!user)
+    return res.status(400).send({ status: "error", error: "User not found" });
+
+  user.password = password;
+  user.save();
+
+  res.send({
+    status: "success",
+    message: "Password reset correctly",
+  });
+});
+
+sessionRouter.get("current", authorizedToken, (req, res) => {
+  res.send({ status: "success", token: token });
 });
 
 export default sessionRouter;

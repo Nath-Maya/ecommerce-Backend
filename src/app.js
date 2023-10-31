@@ -7,6 +7,8 @@ import handlebars from "express-handlebars";
 import chalk from "chalk";
 import * as path from "path"
 import FileStore from 'session-file-store'
+import passport from "passport";
+import cookieParser from "cookie-parser";
 
 // Fuentes de metodos, informacion y vistas.
 import __dirname from "./utils.js";
@@ -17,7 +19,7 @@ import messageRouter from "./routes/message.routes.js";
 import sessionRouter from "./routes/sessions.routes.js";
 import usersRouter from "./routes/users.routes.js";
 import { initializatedPassport, initPassportGit } from "./config/passport.config.js"
-import passport from "passport";
+
 
 
 //!**** SERVER
@@ -26,11 +28,13 @@ const app = express();
 const PORT = 8080;
 const fileStorage = FileStore(session)
 
+
 //Decirle al servidor que trabajaremos con JSON y que usara URL.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //middleware
 app.use(express.static(__dirname + '/public')); //Rutas
+app.use(cookieParser());
 
 //!**** CONECT DATABASE  */
 //Validar conexion a la base de datos

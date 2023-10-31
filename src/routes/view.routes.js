@@ -9,7 +9,7 @@ const productManager = new Products();
 viewRouter.get("/products", async (req, res) => {
   let products = await productManager.getAllProducts();
   let user = req.session.user;
-  res.render("home", {  products , user});
+  res.render("home", { products, user });
 });
 
 //! VISTA CHATS
@@ -36,13 +36,17 @@ viewRouter.get("/register", (req, res) => {
 });
 
 viewRouter.get("/", (req, res) => {
+  if (req.session.user) res.redirect("/products");
   res.render("login");
 });
 
-viewRouter.get("/profile", (req, res) => {
-  res.render("profile", {
-    user: req.session.user,
-  });
+viewRouter.get("/", (req, res) => {
+  if (!req.session.user) res.redirect("/login");
+  res.render("profile", { user: req.session.user });
+});
+
+viewRouter.get("/reset", async (req, res) => {
+  res.render("reset");
 });
 
 export default viewRouter;
