@@ -30,6 +30,8 @@ sessionRouter.post("/register", async (req, res) => {
     rol,
   };
 
+  if (email == "adminCoder@coder.com" && password == "adminCod3r123")
+  user.rol = "admin";
   //Pasamos el user al model por medio del create.
   let result = await userModel.create(user);
   res.send({ status: "sucess", message: "User registered" });

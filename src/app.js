@@ -16,6 +16,8 @@ import viewsRouter from "./routes/view.routes.js";
 import messageRouter from "./routes/message.routes.js";
 import sessionRouter from "./routes/sessions.routes.js";
 import usersRouter from "./routes/users.routes.js";
+import { initializatedPassport, initPassportGit } from "./config/passport.config.js"
+import passport from "passport";
 
 
 //!**** SERVER
@@ -57,6 +59,12 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+//! STRATEGY PASSPORT
+initializatedPassport()
+initPassportGit()
+app.use(passport.initialize())
+app.use(passport.session())
 
 //**** HANDLEBARS */
 
