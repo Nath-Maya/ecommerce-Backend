@@ -67,6 +67,22 @@ const initializatedPassport = () => {
       done(error);
     }
   });
+
+  passport.use('register', new LocalStrategy(
+    { passReqToCallback: true, usernameField: 'email' }, async (req, username, password, done) => {
+        const { first_name, last_name, email, age, password: userPassword } = req.body
+        try {
+            let user = await userService.getUserById({ email: username })
+            if (user) {
+                console.log("User already exist.")
+                return done(null, false) 
+            }
+            const newUser = { first_name, last_name, email, age, password: createHash(userPassword), cartId: 'for now, just a string' }
+            let result = await userService.saveUser(newUser)
+            return done(null, result)
+        } catch (error) { return res.status(400).send({ status: "error", error: "" }) }
+    }
+))
 };
 
 export default initializatedPassport
