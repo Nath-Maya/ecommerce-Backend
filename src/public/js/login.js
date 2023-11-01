@@ -20,7 +20,7 @@ form.addEventListener("submit", (e) => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Error User!",
+        text: "Usuario No encontrado!",
         footer: '<a href="/register">Registrese aqui</a>',
       });
     }

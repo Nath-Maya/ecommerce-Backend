@@ -20,6 +20,12 @@ form.addEventListener("submit", (e) => {
       }
       return result.json();
     })
-    .then((json) => console.log(json))
-    .catch((error) => console.error(error));
+    .then((json) => console.log(json));x
+  Swal.fire({
+    position: "top-center",
+    icon: "success",
+    title: "Usuario registrado",
+    showConfirmButton: true,
+    timer: 2500,
+  }).catch((error) => console.error(error));
 });
