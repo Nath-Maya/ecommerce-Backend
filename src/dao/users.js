@@ -20,20 +20,6 @@ export default class Users {
     }
   };
 
-   //!   GET USER EMAIL
-   getUserByEmail = async (userEmail) => {
-    try {
-      // const user = await userModel.findById({ email: userEmail });
-      const user = "1@2"
-      console.log("----"+userEmail)
-      console.log(user)
-      console.log("\u001b[1;36m User found ");
-      return user;
-    } catch (error) {
-      console.log("\u001b[1;31m User not found");
-    }
-  };
-
   //! SAVE USER
   saveUser = async (user) => {
     let result = await userModel.create(user);

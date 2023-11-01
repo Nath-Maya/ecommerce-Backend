@@ -5,6 +5,7 @@ import Users from "../dao/users.js";
 import { createHash, isValidPassword } from "../utils.js";
 import gitHubStrategy from "passport-github2";
 import KEY from "../utils.js";
+import userModel from '../models/users.model.js'
 
 const LocalStrategy = local.Strategy;
 const userService = new Users();
@@ -65,33 +66,27 @@ const initializatedPassport = () => {
   passport.use(
     "register",
     new LocalStrategy(
-      { passReqToCallback: true, usernameField: "email" },
+      { passReqToCallback: true, usernameField: "email", session: false },
       async (req, username, password, done) => {
-        const {
-          first_name,
-          last_name,
-          email,
-          age,
-          password: userPassword,
-        } = req.body;
+        const { first_name, last_name, email, age } = req.body;
         try {
-          let user = await userService.getUserById({ email: username });
+          let user = await userModel.findOne({ email: username });
           if (user) {
-            console.log("User already exist.");
-            return done(null, false);
+            return done(null, false, {
+              message: "Correo electrónico ya registrado",
+            });
           }
           const newUser = {
             first_name,
             last_name,
             email,
             age,
-            password: createHash(userPassword),
-            cartId: "for now, just a string",
+            password: createHash(password),
           };
-          let result = await userService.saveUser(newUser);
+          let result = await userModel.create(newUser);
           return done(null, result);
         } catch (error) {
-          return res.status(400).send({ status: "error", error: "" });
+          return done("Error de usuario" + error);
         }
       }
     )
@@ -100,19 +95,17 @@ const initializatedPassport = () => {
   passport.use(
     "login",
     new LocalStrategy(
-      { usernameField: "email" },
-      async (userEmail, password, done) => {
+      { passReqToCallback: true, usernameField: "email" },
+      async (req, username, password, done) => {
         try {
-          // const user = await userService.getUserByEmail(userEmail);
-          const user = "1@2"
-          console.log("soy usermail " + userEmail)
-          console.log(password)
+          const user = await userModel.findOne({ email: username });
           if (!user) {
-            console.log("passport.config login strat : user doesnt exist");
-            return done(null, false);
+            return done(null, false, { message: "Usuario no encontrado" });
           }
-          if (!isValidPassword(user, password)) return done(null, false);
-          return done(null, user); //cuando esta info sale de aca, queda guardada en req.user
+          if (!isValidPassword(user, password)) {
+            return done(null, false, { message: "Contraseña incorrecta" });
+          }
+          return done(null, user);
         } catch (error) {
           return done(error);
         }
