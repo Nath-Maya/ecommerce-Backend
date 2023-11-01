@@ -1,14 +1,18 @@
 import passport from "passport";
 import local from "passport-local";
-
+import jwt from "jsonwebtoken"
 import Users from "../dao/users.js";
 import { createHash, isValidPassword } from "../utils.js";
-import githubService from "passport-github2";
+import gitHubStrategy from "passport-github2";
+import KEY from "../utils.js"
 
 const LocalStrategy = local.Strategy;
 const userService = new Users();
 
-export const initializatedPassport = () => {
+
+
+const initializatedPassport = () => {
+
   passport.use(
     "register",
     new LocalStrategy(
@@ -32,7 +36,7 @@ export const initializatedPassport = () => {
             age,
             password: createHash(password),
           };
-          let result = await  userService.create(userNew);
+          let result = await userService.saveUser(userNew);
           return done(null, result);
         } catch (error) {
           return done("error en usuario" + error);
@@ -44,17 +48,56 @@ export const initializatedPassport = () => {
   passport.use(
     "login",
     new LocalStrategy(
-      { passReqToCallback: true, usernameField: "email", session: false }, async(req, email, password, done) => {
+      { passReqToCallback: true, usernameField: "email", session: false },
+      async (req, email, password, done) => {
         try {
-            console.log('req:'+req+'email:'+email+' '+password)
-          const user = await userService.getUserById({email:email});
+          console.log("req:" + req + "email:" + email + " " + password);
+          const user = await userService.getUserById({ email: email });
           if (!user) return done(null, false, { message: "User not found" });
           const validatePassword = isValidPassword(user, password);
           if (!validatePassword)
             return done(null, false, { message: "incorrect Password" });
           return done(null, user);
         } catch (error) {
-          return done(null,error);
+          return done(null, error);
+        }
+      }
+    )
+  );
+
+ 
+
+  passport.use(
+    "github",
+    new gitHubStrategy(
+      {
+        clientID: "Iv1.c1ee39f6859ad22e",
+        clientSecret: "16cd1f1d7a8b72818beddd30a9ded2124d0dcad9",
+        callbackURL: "http://localhost:8080/session/githubcallback",
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          let user = await userService.getUserById({ email: profile._json.email });
+          if (!user) {
+            let newUser = {
+              first_name: profile._json.name,
+              last_name: profile._json.family_name || "",
+              email: profile._json.email,
+              age: "",
+              role: "user",
+              password: "",
+            };
+            let result = await userService.saveUser(newUser);
+            user = result; // asigna el nuevo usuario al objeto user
+          }
+
+          // Generar un token JWT con la información del usuario
+          const token = jwt.sign({ user }, KEY, { expiresIn: "1h" });
+
+          // Pasar el token al callback 'done'
+          done(null, token);
+        } catch (error) {
+          return done(error);
         }
       }
     )
@@ -62,35 +105,27 @@ export const initializatedPassport = () => {
 
   passport.serializeUser((user, done) => {
     done(null, user._id);
+    console.log(user)
   });
-
+  
   passport.deserializeUser(async (id, done) => {
     let user = await userService.getUserById({_id:id});
+    console.log(user)
     done(null, user);
   });
-};
-
-export const initPassportGit = () => {
-  passport.serializeUser((user, done) => {
-    done(null, user._id);
-  });
-  passport.deserializeUser(async (id, done) => {
-    let user = await githubService.findById(id);
-    done(null, user);
-  });
-
+  /*
   passport.use(
     "github",
     new githubService(
       {
         clientID: " Iv1.c1ee39f6859ad22e",
         clientSecret: "16cd1f1d7a8b72818beddd30a9ded2124d0dcad9",
-        callbackURL: "http://localhost:8080/api/sessions/githubcallback",
+        callbackURL: "http://localhost:8080/session/githubcallback",
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          console.log(profile);
           let user = await  userService.getUserById({ email: profile._json.email });
+
           if (!user) {
             let newUser = {
               first_name: profile._json.name,
@@ -99,7 +134,7 @@ export const initPassportGit = () => {
               email: profile._json.email,
               password: "req",
             };
-            let result = await  users.create(newUser);
+            let result = await  userService.create(newUser);
             done(null, result);
           } else {
             done(null, user);
@@ -110,4 +145,7 @@ export const initPassportGit = () => {
       }
     )
   );
+  */
 };
+
+export default initializatedPassport

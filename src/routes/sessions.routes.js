@@ -2,7 +2,7 @@ import { Router } from "express";
 import userModel from "../models/users.model.js";
 import {
   createHash,
-  isValidPassword,
+  isValidPassword, 
   authorizedToken,
   generateToken,
 } from "../utils.js";
@@ -39,12 +39,11 @@ sessionRouter.post("/register", async (req, res) => {
   if (email == "adminCoder@coder.com" && password == "adminCod3r123")
     user.rol = "admin";
   //Pasamos el user al model por medio del create.
-  let result = await userModel.create(user);
+  let result = await userModel.saveUser(user);
   res.send({ status: "sucess", message: "User registered" });
 });
 
 //! LOGIN
-/*
 sessionRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
   //Validacion del password ingresado
@@ -68,11 +67,9 @@ sessionRouter.post("/login", async (req, res) => {
   req.session.user = user;
   res.send({ status: "success", payload: user });
 });
-*/
 
-sessionRouter.post(
-  "/login",
-  passport.authenticate("login", {
+
+sessionRouter.post("/login", passport.authenticate("login", {
     passReqToCallback: true,
     session: false,
     failureRedirect: "/failedLogin",
@@ -146,21 +143,30 @@ sessionRouter.post(
   }
 );
 
-sessionRouter.get(
-  "/github",
-  passport.authenticate("github", { scope: ["user:email"] }),
-  async (req, res) => {}
-);
+// sessionRouter.get(
+//   "/github",
+//   passport.authenticate("github", { scope: ["user:email"] }),
+//   async (req, res) => {}
+// );
 
-sessionRouter.get(
-  "/githubcallback",
-  passport.authenticate("github", { failureRedirect: "/login" }),
-  async (req, res) => {
-    req.session.user = req.user;
+// sessionRouter.get(
+//   "/githubcallback",
+//   passport.authenticate("github", { failureRedirect: "/login" }),
+//   async (req, res) => {
+//     req.session.user = req.user;
 
-    res.redirect("/products");
-  }
-);
+//     res.redirect("/products");
+//   }
+// );
+
+sessionRouter.get('/github', passport.authenticate('github', { scope: ['user: email'] }), async (req, res) => {
+
+})
+
+sessionRouter.get('/githubcallback', passport.authenticate('github', { failureRedirect: "/login" }), async (req, res) => {
+    req.user = req.user
+    res.redirect('/profile')
+})
 
 sessionRouter.post("/reset", async (req, res) => {
   const { email, password } = req.body;

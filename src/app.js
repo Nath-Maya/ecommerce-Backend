@@ -18,7 +18,7 @@ import viewsRouter from "./routes/view.routes.js";
 import messageRouter from "./routes/message.routes.js";
 import sessionRouter from "./routes/sessions.routes.js";
 import usersRouter from "./routes/users.routes.js";
-import { initializatedPassport, initPassportGit } from "./config/passport.config.js"
+import initializatedPassport from "./config/passport.config.js"
 
 
 
@@ -66,7 +66,7 @@ app.use(
 
 //! STRATEGY PASSPORT
 initializatedPassport()
-initPassportGit()
+// initPassportGit()
 app.use(passport.initialize())
 app.use(passport.session())
 

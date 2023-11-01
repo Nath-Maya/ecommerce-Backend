@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Product from "../dao/products.js"
+import Product from "../dao/products.js";
 
 const productRouter = Router();
 const productManager = new Product();
@@ -56,7 +56,7 @@ productRouter.get("/products", async (req, res) => {
 //! GET PRODUCT ID
 
 productRouter.get("/:idProduct", async (req, res) => {
-  let idProduct  = req.params.idProduct;
+  let idProduct = req.params.idProduct;
   try {
     let result = await productManager.getProductId(idProduct);
     res.send({ status: "succes", payload: result });
