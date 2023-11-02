@@ -1,11 +1,6 @@
 import { Router } from "express";
 import userModel from "../models/users.model.js";
-import {
-  createHash,
-  isValidPassword,
-  authorizedToken,
-  generateToken,
-} from "../utils.js";
+import { authorizedToken, generateToken } from "../utils.js";
 import passport from "passport";
 
 const sessionRouter = Router();
@@ -26,6 +21,7 @@ sessionRouter.get("/failedregister", async (req, res) => {
 //!   LOGIN
 
 sessionRouter.post(
+  /*
   "/login",
   passport.authenticate("login", { failureRedirect: "/failedloginauth" }),
   async (req, res) => {
@@ -33,7 +29,7 @@ sessionRouter.post(
       return res
         .status(400)
         .send({ status: "error", error: "Invalid credentials" });
-    // console.log(req.user) //passport authentication, if successfull, returns the user info like in mongoDb in req.user
+
     req.session.user = {
       first_name: req.user.first_name,
       last_name: req.user.last_name,
@@ -44,12 +40,30 @@ sessionRouter.post(
       cartId: req.user.cartId,
       rol: req.user.rol,
     };
+    res.status(200).send({
+      status: 200,
+      message: `${req.user.first_name} ${req.user.last_name} logged in.`,
+    });
+  }*/
+  "/login",
+  passport.authenticate("login", {
+    passReqToCallback: true,
+    session: false,
+    failureRedirect: "api/sessions/failedLogin",
+    failureMessage: true,
+  }),
+  (req, res) => {
+    const serialUser = {
+      id: req.user._id,
+      name: `${req.user.first_name}`,
+      role: req.user.role,
+      email: req.user.email,
+    };
+    req.session.user = serialUser;
+    const access_token = generateToken(serialUser);
     res
-      .status(200)
-      .send({
-        status: 200,
-        message: `${req.user.first_name} ${req.user.last_name} logged in.`,
-      });
+      .cookie("access_token", access_token, { maxAge: 10000 })
+      .send({ status: "success", payload: serialUser , token : access_token });
   }
 );
 sessionRouter.get("/failedloginauth", async (req, res) => {

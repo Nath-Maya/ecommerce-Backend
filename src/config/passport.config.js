@@ -1,19 +1,101 @@
 import passport from "passport";
 import local from "passport-local";
-import jwt from "jsonwebtoken";
 import Users from "../dao/users.js";
-import { createHash, isValidPassword } from "../utils.js";
+import { createHash, generateToken, isValidPassword } from "../utils.js";
 import gitHubStrategy from "passport-github2";
-import KEY from "../utils.js";
 import userModel from "../models/users.model.js";
-import Cart from "../dao/carts.js";
-import cartModel from "../models/carts.model.js";
 
 const LocalStrategy = local.Strategy;
 const userService = new Users();
 
-const initializatedPassport = () => {
-  //! GITHUB
+//! STRATEGY PASSPORT
+export const initializatedPassport = () => {
+  //* -----REGISTER
+
+  passport.use(
+    "register",
+    new LocalStrategy(
+      { passReqToCallback: true, usernameField: "email", session: false },
+      async (req, username, password, done) => {
+        const { first_name, last_name, email, age } = req.body;
+        try {
+          let user = await userModel.findOne({ email: username });
+          if (user) {
+            return done(null, false, {
+              message: "User already exist",
+            });
+          }
+
+          const newUser = {
+            first_name,
+            last_name,
+            email,
+            age,
+            password: createHash(password),
+          };
+          let result = await userModel.create(newUser);
+
+          //* Token
+          const accessToken = generateToken(user);
+          console.log(acessToken);
+          res.send({ status: "sucess", accessToken });
+
+          return done(null, result);
+        } catch (error) {
+          return done("Error de usuario: " + error);
+        }
+      }
+    )
+  );
+
+  //* -----LOGIN
+
+  passport.use(
+    "login",
+    new LocalStrategy(
+      { passReqToCallback: true, usernameField: "email" },
+      async (req, username, password, done) => {
+        try {
+          const user = await userModel.findOne({ email: username });
+          if (!user) {
+            return done(null, false, { message: "User not found" });
+          }
+          if (!isValidPassword(user, password)) {
+            return done(null, false, { message: "Invalid Credentials" });
+          }
+
+          return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  //* SERIALIZE - DESERIALIZE
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
+
+  passport.deserializeUser(async (id, done) => {
+    try {
+      let user = await userService.getUserById(id);
+      done(null, user);
+    } catch (error) {
+      done(error);
+    }
+  });
+};
+
+//! STRATEGY GITHUB
+export const initPassportGit = () => {
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
+  passport.deserializeUser(async (id, done) => {
+    let user = await githubService.findById(id);
+    done(null, user);
+  });
 
   passport.use(
     "github",
@@ -53,77 +135,4 @@ const initializatedPassport = () => {
       }
     )
   );
-
-  //! SERIALIZE - DESERIALIZE
-
-  passport.serializeUser((user, done) => {
-    done(null, user._id);
-  });
-
-  passport.deserializeUser(async (id, done) => {
-    try {
-      let user = await userService.getUserById(id);
-      done(null, user);
-    } catch (error) {
-      done(error);
-    }
-  });
-
-  //! REGISTER
-
-  passport.use(
-    "register",
-    new LocalStrategy(
-      { passReqToCallback: true, usernameField: "email", session: false },
-      async (req, username, password, done) => {
-        const { first_name, last_name, email, age } = req.body;
-        try {
-          let user = await userModel.findOne({ email: username });
-          if (user) {
-            return done(null, false, {
-              message: "User already exist",
-            });
-          }
-
-          //Crear el USUARIO
-          const newUser = {
-            first_name,
-            last_name,
-            email,
-            age,
-            password: createHash(password),
-          };
-          let result = await userModel.create(newUser);
-
-          return done(null, result);
-        } catch (error) {
-          return done("Error de usuario: " + error);
-        }
-      }
-    )
-  );
-  //! LOGIN
-
-  passport.use(
-    "login",
-    new LocalStrategy(
-      { passReqToCallback: true, usernameField: "email" },
-      async (req, username, password, done) => {
-        try {
-          const user = await userModel.findOne({ email: username });
-          if (!user) {
-            return done(null, false, { message: "Usuario no encontrado" });
-          }
-          if (!isValidPassword(user, password)) {
-            return done(null, false, { message: "Contraseña incorrecta" });
-          }
-          return done(null, user);
-        } catch (error) {
-          return done(error);
-        }
-      }
-    )
-  );
 };
-
-export default initializatedPassport;

@@ -5,8 +5,7 @@ import MongoStore from "connect-mongo";
 import mongoose from "mongoose";
 import handlebars from "express-handlebars";
 import chalk from "chalk";
-import * as path from "path"
-import FileStore from 'session-file-store'
+import FileStore from "session-file-store";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 
@@ -18,22 +17,19 @@ import viewsRouter from "./routes/view.routes.js";
 import messageRouter from "./routes/message.routes.js";
 import sessionRouter from "./routes/sessions.routes.js";
 import usersRouter from "./routes/users.routes.js";
-import initializatedPassport from "./config/passport.config.js"
-
-
+import {initializatedPassport, initPassportGit} from "./config/passport.config.js";
 
 //!**** SERVER
 //Inicializar variables del Servidor
 const app = express();
 const PORT = 8080;
-const fileStorage = FileStore(session)
-
+const fileStorage = FileStore(session);
 
 //Decirle al servidor que trabajaremos con JSON y que usara URL.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //middleware
-app.use(express.static(__dirname + '/public')); //Rutas
+app.use(express.static(__dirname + "/public")); //Rutas
 app.use(cookieParser());
 
 //!**** CONECT DATABASE  */
@@ -65,10 +61,10 @@ app.use(
 );
 
 //! STRATEGY PASSPORT
-initializatedPassport()
-// initPassportGit()
-app.use(passport.initialize())
-app.use(passport.session())
+initializatedPassport();
+initPassportGit()
+app.use(passport.initialize());
+app.use(passport.session());
 
 //**** HANDLEBARS */
 
@@ -83,7 +79,7 @@ app.use("/cart", cartRouter);
 app.use("/", viewsRouter);
 app.use("/message", messageRouter);
 app.use("/session", sessionRouter);
-app.use("/users", usersRouter)
+app.use("/users", usersRouter);
 
 //**** UP SERVER  */
 app.listen(PORT, () => {
