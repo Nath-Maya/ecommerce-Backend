@@ -10,6 +10,8 @@ import passport from "passport";
 
 const sessionRouter = Router();
 
+//!   REGISTER
+
 sessionRouter.post(
   "/register",
   passport.authenticate("register", { failureRedirect: "/failregister" }),
@@ -20,6 +22,8 @@ sessionRouter.post(
 sessionRouter.get("/failedregister", async (req, res) => {
   res.send({ error: "Failed register." });
 });
+
+//!   LOGIN
 
 sessionRouter.post(
   "/login",
@@ -38,7 +42,7 @@ sessionRouter.post(
       age: req.user.age,
       password: req.user.password,
       cartId: req.user.cartId,
-      role: req.user.role,
+      rol: req.user.rol,
     };
     res
       .status(200)
@@ -53,6 +57,8 @@ sessionRouter.get("/failedloginauth", async (req, res) => {
   res.status(400).send({ status: 400, error: "Failed Login." });
 });
 
+//! LOGOUT
+
 sessionRouter.get("/logout", async (req, res) => {
   req.session.destroy((error) => {
     if (error) {
@@ -61,6 +67,8 @@ sessionRouter.get("/logout", async (req, res) => {
     res.redirect("/");
   });
 });
+
+//! GITHUB
 
 sessionRouter.get(
   "/github",

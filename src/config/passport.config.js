@@ -5,12 +5,16 @@ import Users from "../dao/users.js";
 import { createHash, isValidPassword } from "../utils.js";
 import gitHubStrategy from "passport-github2";
 import KEY from "../utils.js";
-import userModel from '../models/users.model.js'
+import userModel from "../models/users.model.js";
+import Cart from "../dao/carts.js";
+import cartModel from "../models/carts.model.js";
 
 const LocalStrategy = local.Strategy;
 const userService = new Users();
 
 const initializatedPassport = () => {
+  //! GITHUB
+
   passport.use(
     "github",
     new gitHubStrategy(
@@ -50,6 +54,8 @@ const initializatedPassport = () => {
     )
   );
 
+  //! SERIALIZE - DESERIALIZE
+
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
@@ -63,6 +69,8 @@ const initializatedPassport = () => {
     }
   });
 
+  //! REGISTER
+
   passport.use(
     "register",
     new LocalStrategy(
@@ -73,9 +81,11 @@ const initializatedPassport = () => {
           let user = await userModel.findOne({ email: username });
           if (user) {
             return done(null, false, {
-              message: "Correo electrónico ya registrado",
+              message: "User already exist",
             });
           }
+
+          //Crear el USUARIO
           const newUser = {
             first_name,
             last_name,
@@ -84,13 +94,15 @@ const initializatedPassport = () => {
             password: createHash(password),
           };
           let result = await userModel.create(newUser);
+
           return done(null, result);
         } catch (error) {
-          return done("Error de usuario" + error);
+          return done("Error de usuario: " + error);
         }
       }
     )
   );
+  //! LOGIN
 
   passport.use(
     "login",
