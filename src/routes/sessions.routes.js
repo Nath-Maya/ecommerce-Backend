@@ -122,8 +122,12 @@ sessionRouter.post("/reset", async (req, res) => {
   });
 });
 
-sessionRouter.get("current", authorizedToken, (req, res) => {
-  res.send({ status: "success", token: token });
-});
+// sessionRouter.get("current", authorizedToken, (req, res) => {
+//   res.send({ status: "success", token: token });
+// });
+
+sessionRouter.get('/current', passport.authenticate('jwt', {session: false}), (req,res)=> {
+  res.send(req.user)
+})
 
 export default sessionRouter;

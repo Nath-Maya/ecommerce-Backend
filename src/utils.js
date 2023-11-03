@@ -2,6 +2,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import passport from "passport";
 
 //? KEY
 //Clave para la generacion y verificacion de tokens
@@ -12,7 +13,7 @@ export const createHash = (password) =>
 
 export const isValidPassword = (user, password) =>
   bcrypt.compareSync(password, user.password);
-  
+
 //? TOKEN
 //Generar el token con tiempo de expiracion por 12horas
 export const generateToken = (user) => {
@@ -38,6 +39,21 @@ export const authorizedToken = (req, res, next) => {
     req.user = credentials.user;
     next();
   });
+};
+
+export const passportCalle = (strategy) => {
+  return async (req, res, next) => {
+    passport.authenticate(strategy, function (err, user, info) {
+      if (err) return next(err);
+      if (!user) {
+        return res
+          .status(401)
+          .send({ error: info.messages ? info.messages : info.toString() });
+      }
+      res.user - user;
+      next();
+    })(req, res, next);
+  };
 };
 
 const __filename = fileURLToPath(import.meta.url);
