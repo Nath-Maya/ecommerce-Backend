@@ -4,12 +4,45 @@ import Users from "../dao/users.js";
 import { createHash, generateToken, isValidPassword } from "../utils.js";
 import gitHubStrategy from "passport-github2";
 import userModel from "../models/users.model.js";
+import jwt from "passport-jwt";
 
+const JwtStrategy = jwt.Strategy;
+const ExtractJwt = jwt.ExtractJwt;
 const LocalStrategy = local.Strategy;
+
 const userService = new Users();
+
+//!COOKIE EXTRACTOR
+
+const cookieExtractor = req =>{
+  let token = null
+  if(req && req.cookies){
+      token = req.cookies["token"]
+  }
+  return token
+}
 
 //! STRATEGY PASSPORT
 export const initializatedPassport = () => {
+  //* JWT
+
+  passport.use(
+    "jwt",
+    new JwtStrategy(
+      {
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: "Secret-key",
+      },
+      async (jwt_payload, done) => {
+        try {
+          return done(null, jwt_payload);
+        } catch (err) {
+          return done(err);
+        }
+      }
+    )
+  );
+
   //* -----REGISTER
 
   passport.use(
