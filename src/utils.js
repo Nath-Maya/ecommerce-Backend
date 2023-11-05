@@ -41,7 +41,7 @@ export const authorizedToken = (req, res, next) => {
   });
 };
 
-export const passportCalle = (strategy) => {
+export const passportCall = (strategy) => {
   return async (req, res, next) => {
     passport.authenticate(strategy, function (err, user, info) {
       if (err) return next(err);
