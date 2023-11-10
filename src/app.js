@@ -22,7 +22,7 @@ import {initializatedPassport, initPassportGit} from "./config/passport.config.j
 //!**** SERVER
 //Inicializar variables del Servidor
 const app = express();
-const PORT = 8080;
+const PORT = 3000;
 const fileStorage = FileStore(session);
 
 //Decirle al servidor que trabajaremos con JSON y que usara URL.

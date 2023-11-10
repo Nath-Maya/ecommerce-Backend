@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/src/public/css/tailwind.css">
+    <link rel="stylesheet" href="/tailwind.css">
+
     <title>Login</title>
 </head>
+
 <body>
-    <div>
-    <h1>Login</h1>
-    <form id="loginForm">
-        <label>Email</label>
-        <input name="email" type="email" required>
-        <br/>
-        <label>Contraseña</label>
-        <input type="password" name="password" required>
-        <input type="submit">
-    </form>
-    <p>¿No estás registrado? <a href="/register">Regístrate aquí</a></p>
-    <div>
-        <p><a href="/session/github">Autenticarse con Github</a></p>
+    <div class="shadow-md">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <label>Email</label>
+            <input name="email" type="email" required>
+            <br />
+            <label>Contraseña</label>
+            <input type="password" name="password" required>
+            <input type="submit">
+        </form>
+        <p class="text-3xl font-bold underline">¿No estás registrado? <a href="/register">Regístrate aquí</a></p>
+        <div>
+            <p><a href="/session/github">Autenticarse con Github</a></p>
+        </div>
     </div>
-</div>
-<script type="module" src="/js/login.js"></script>
+
+    <script type="module" src="/js/login.js"></script>
 </body>
+
 </html>
