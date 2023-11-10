@@ -21,30 +21,6 @@ sessionRouter.get("/failedregister", async (req, res) => {
 //!   LOGIN
 
 sessionRouter.post(
-  /*
-  "/login",
-  passport.authenticate("login", { failureRedirect: "/failedloginauth" }),
-  async (req, res) => {
-    if (!req.user)
-      return res
-        .status(400)
-        .send({ status: "error", error: "Invalid credentials" });
-
-    req.session.user = {
-      first_name: req.user.first_name,
-      last_name: req.user.last_name,
-      last_name: req.user.last_name,
-      email: req.user.email,
-      age: req.user.age,
-      password: req.user.password,
-      cartId: req.user.cartId,
-      rol: req.user.rol,
-    };
-    res.status(200).send({
-      status: 200,
-      message: `${req.user.first_name} ${req.user.last_name} logged in.`,
-    });
-  }*/
   "/login",
   passport.authenticate("login", {
     passReqToCallback: true,
@@ -122,9 +98,6 @@ sessionRouter.post("/reset", async (req, res) => {
   });
 });
 
-// sessionRouter.get("current", authorizedToken, (req, res) => {
-//   res.send({ status: "success", token: token });
-// });
 
 sessionRouter.get('/current', passport.authenticate('jwt', {session: false}), (req,res)=> {
   res.send(req.user)
