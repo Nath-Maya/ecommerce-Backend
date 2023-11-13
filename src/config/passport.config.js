@@ -5,7 +5,7 @@ import { createHash, generateToken, isValidPassword } from "../utils.js";
 import gitHubStrategy from "passport-github2";
 import userModel from "../models/users.model.js";
 import jwt from "passport-jwt";
-import config from "../config.js";
+import config from "./config.js";
 
 const JwtStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;

@@ -18,7 +18,7 @@ import messageRouter from "./routes/message.routes.js";
 import sessionRouter from "./routes/sessions.routes.js";
 import usersRouter from "./routes/users.routes.js";
 import {initializatedPassport, initPassportGit} from "./config/passport.config.js";
-import config from "./config.js"
+import config from "./config/config.js"
 
 //!**** SERVER
 //Inicializar variables del Servidor

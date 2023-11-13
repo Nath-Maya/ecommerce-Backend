@@ -3,10 +3,11 @@ import { dirname } from "path";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import passport from "passport";
+import config from "./config/config.js";
 
 //? KEY
 //Clave para la generacion y verificacion de tokens
-const KEY = "coderUser";
+const KEY = config.keyToken;
 
 export const createHash = (password) =>
   bcrypt.hashSync(password, bcrypt.genSaltSync(10));
