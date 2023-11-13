@@ -18,14 +18,12 @@ import messageRouter from "./routes/message.routes.js";
 import sessionRouter from "./routes/sessions.routes.js";
 import usersRouter from "./routes/users.routes.js";
 import {initializatedPassport, initPassportGit} from "./config/passport.config.js";
-import config from "./config.js";
-
-console.log(config)
+import config from "./config.js"
 
 //!**** SERVER
 //Inicializar variables del Servidor
 const app = express();
-const PORT = 3000;
+const PORT = config.port;
 const fileStorage = FileStore(session);
 
 //Decirle al servidor que trabajaremos con JSON y que usara URL.
@@ -39,7 +37,7 @@ app.use(cookieParser());
 //Validar conexion a la base de datos
 mongoose
   .connect(
-    "mongodb+srv://nathamayaramirez93:1234Maya@cluster0.g6udpni.mongodb.net/ecommerce?retryWrites=true&w=majority",
+    config.mongoUrl,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
@@ -54,7 +52,7 @@ app.use(
   session({
     store: MongoStore.create({
       mongoUrl:
-        "mongodb+srv://nathamayaramirez93:1234Maya@cluster0.g6udpni.mongodb.net/ecommerce?retryWrites=true&w=majority",
+        config.mongoUrl,
       ttl: 3600,
     }),
     secret: "clave",
