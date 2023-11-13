@@ -5,6 +5,7 @@ import { createHash, generateToken, isValidPassword } from "../utils.js";
 import gitHubStrategy from "passport-github2";
 import userModel from "../models/users.model.js";
 import jwt from "passport-jwt";
+import config from "../config.js";
 
 const JwtStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
@@ -31,7 +32,7 @@ export const initializatedPassport = () => {
     new JwtStrategy(
       {
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-        secretOrKey: "Secret-key",
+        secretOrKey: config.secretKey,
       },
       async (jwt_payload, done) => {
         try {
@@ -134,9 +135,9 @@ export const initPassportGit = () => {
     "github",
     new gitHubStrategy(
       {
-        clientID: "Iv1.c1ee39f6859ad22e",
-        clientSecret: "16cd1f1d7a8b72818beddd30a9ded2124d0dcad9",
-        callbackURL: "http://localhost:8080/session/githubcallback",
+        clientID: config.clientId,
+        clientSecret: config.clientSecret,
+        callbackURL: config.callbackUrl,
       },
 
       async (accessToken, refreshToken, profile, done) => {
