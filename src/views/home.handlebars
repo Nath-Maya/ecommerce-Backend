@@ -8,6 +8,7 @@
    <title>Home</title>
 </head>
 
+<<<<<<< HEAD
 <body class="bg-gray-100">
    <div class="container mx-auto py-8">
       <div class="bg-white p-8 shadow-md rounded-md mb-8">
@@ -33,6 +34,30 @@
          <a href="/product/{{this._id}}" class="text-blue-500 hover:text-blue-700">Ver detalles</a>
       </div>
       {{/each}}
+=======
+<body>
+   <div>
+      <div>
+         <h1>Bienvenido !</h1>
+         <h3><a href="/session/logout">Cerrar sesión</a></h3>
+         <p>{{user.name}}</p>
+         <p>{{user.email}}</p>
+         <p>{{user.rol}}</p>
+      </div>
+   </div>
+   <h1>Lista de productos</h1>
+   {{#each products}}
+   <div class="card-product">
+      <h2>{{this.title}}</h2>
+      <p>{{this._id}}</p>
+      <p> {{this.description}} </p>
+      <p> {{this.price}} </p>
+      <p> {{this.category}} </p>
+      <p> {{this.stock}} </p>
+      <img src="{{this.image}}" alt="" />
+      <button class="btn-addCart" data-product-id="{{this._id}}">Agregar al carrito</button>
+      <a href="/product/{{this._id}}">Ver detalles</a>
+>>>>>>> main
    </div>
 </body>
 

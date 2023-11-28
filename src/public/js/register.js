@@ -20,6 +20,7 @@ form.addEventListener("submit", (e) => {
       }
       return result.json();
     })
+<<<<<<< HEAD
     .then((json) => console.log(json));x
   Swal.fire({
     position: "top-center",
@@ -28,4 +29,8 @@ form.addEventListener("submit", (e) => {
     showConfirmButton: true,
     timer: 2500,
   }).catch((error) => console.error(error));
+=======
+    .then((json) => console.log(json))
+    .catch((error) => console.error(error));
+>>>>>>> main
 });
