@@ -32,7 +32,7 @@ A continuación, se muestran las dependencias utilizadas en este proyecto:
 1. Clonar el repositorio: 
 
 ```shell
-git clone https://github.com/Nath-Maya/ecommerce-Backend.git
+https://github.com/Nath-Maya/ecommerce-Backend.git
 ```
 2. Navega hasta el directorio del proyecto.
 
@@ -57,26 +57,11 @@ Para iniciar la aplicación, ejecuta el siguiente comando:
 nodemon app.js
 ```
 
-### 📖 Práctica Integradora #2
+### 📖 Pre-Entrega #3
 
 **✔️ Aspectos a incluir:**
 
-1. Crear un modelo User el cual contará con los campos:
-
-```shell
-first_name:String,
-last_name:String,
-email:String (único)
-age:Number,
-password:String(Hash)
-cart:Id con referencia a Carts
-role:String(default:’user’)
-```
-
-2. Desarrollar las estrategias de Passport para que funcionen con este modelo de usuarios
-<br>
-3. Modificar el sistema de login del usuario para poder trabajar con session o con jwt (a tu elección). 
-(Sólo para jwt) desarrollar una estrategia “current” para extraer la cookie que contiene el token para obtener el usuario asociado a dicho token, en caso de tener el token, devolver al usuario asociado al token, caso contrario devolver un error de passport, utilizar un extractor de cookie.
+![imagen](./src/public/img/iScreen%20Shoter%20-%2020231127215716458.jpg)
 
 
 
