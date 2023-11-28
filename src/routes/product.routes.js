@@ -1,9 +1,5 @@
 import { Router } from "express";
-<<<<<<< HEAD
 import Product from "../dao/products.js";
-=======
-import Product from "../dao/products.js"
->>>>>>> main
 
 const productRouter = Router();
 const productManager = new Product();

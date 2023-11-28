@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-<<<<<<< HEAD
 const userCollection = "Users";
 const userSchema = new mongoose.Schema({
   first_name: String,
@@ -17,16 +16,3 @@ const userSchema = new mongoose.Schema({
 });
 const userModel = mongoose.model(userCollection, userSchema);
 export default userModel;
-=======
-const userCollection ='Users'
-const userSchema = new mongoose.Schema({
-    first_name:String,
-    last_name:String,
-    email: String,
-    age: String,
-    password:String,
-    rol: String,
-})
-const userModel= mongoose.model(userCollection,userSchema)
-export default userModel;
->>>>>>> main

@@ -9,11 +9,7 @@ const productManager = new Products();
 viewRouter.get("/products", async (req, res) => {
   let products = await productManager.getAllProducts();
   let user = req.session.user;
-<<<<<<< HEAD
   res.render("home", { products, user });
-=======
-  res.render("home", {  products , user});
->>>>>>> main
 });
 
 //! VISTA CHATS
@@ -40,7 +36,6 @@ viewRouter.get("/register", (req, res) => {
 });
 
 viewRouter.get("/", (req, res) => {
-<<<<<<< HEAD
   if (req.session.user) res.redirect("/products");
   res.render("login");
 });
@@ -52,15 +47,6 @@ viewRouter.get("/", (req, res) => {
 
 viewRouter.get("/reset", async (req, res) => {
   res.render("reset");
-=======
-  res.render("login");
-});
-
-viewRouter.get("/profile", (req, res) => {
-  res.render("profile", {
-    user: req.session.user,
-  });
->>>>>>> main
 });
 
 export default viewRouter;
