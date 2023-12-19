@@ -9,5 +9,7 @@ export default {
   clientSecret: process.env.CLIENT_SECRET,
   callbackUrl: process.env.CALLBACK_URL,
   secretKey: process.env.SECRET_KEY,
-  keyToken: process.env.KEY_TOKEN
+  keyToken: process.env.KEY_TOKEN,
+  email: process.env.EMAIL,
+  emailPassword: process.env.EMAIL_PASSWORD
 };

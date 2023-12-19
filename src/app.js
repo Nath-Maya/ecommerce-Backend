@@ -19,6 +19,7 @@ import sessionRouter from "./routes/sessions.routes.js";
 import usersRouter from "./routes/users.routes.js";
 import {initializatedPassport, initPassportGit} from "./config/passport.config.js";
 import config from "./config/config.js"
+import sendEmail from "./service/mailing.js";
 
 //!**** SERVER
 //Inicializar variables del Servidor
@@ -32,6 +33,18 @@ app.use(express.urlencoded({ extended: true }));
 //middleware
 app.use(express.static(__dirname + "/public")); //Rutas
 app.use(cookieParser());
+
+const ticket = {
+  code: 0,
+  purchase_datetime: 0,
+  purchase_products: 0,
+  amount: 0,
+  purchaser: 0,
+};
+
+await sendEmail(ticket);
+
+
 
 //!**** CONECT DATABASE  */
 //Validar conexion a la base de datos
