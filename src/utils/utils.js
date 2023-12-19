@@ -3,7 +3,7 @@ import { dirname } from "path";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import passport from "passport";
-import config from "./config/config.js";
+import config from "../config/config.js";
 
 //? KEY
 //Clave para la generacion y verificacion de tokens
