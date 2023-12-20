@@ -10,7 +10,7 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 
 // Fuentes de metodos, informacion y vistas.
-import __dirname from "./utils.js";
+import __dirname from "./utils.js.js.js.js";
 import cartRouter from "./routes/cart.routes.js";
 import productRouter from "./routes/product.routes.js";
 import viewsRouter from "./routes/view.routes.js";
