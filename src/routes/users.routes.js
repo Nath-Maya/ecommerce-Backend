@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Users from "../dao/users.js.js.js.js";
+import Users from "../dao/users.js";
 
 const usersRouter = Router();
 const userManager = new Users();

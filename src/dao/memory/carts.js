@@ -4,10 +4,6 @@ import productModel from "../models/products.model.js";
 export default class Cart {
   constructor() {}
 
-  //? ----------- Metodos Cart
-
-  //* GET
-  //Consulta de todos los CARTS generados
   getAllCart = async () => {
     try {
       let result = await cartModel.find().lean();
@@ -18,8 +14,6 @@ export default class Cart {
     }
   };
 
-  //* GET BY ID CART
-  //Consultar el carrito con un id en especifico suministrado.
   getCartId = async (idCart) => {
     try {
       const cart = await cartModel.findById(idCart);
@@ -30,8 +24,6 @@ export default class Cart {
     }
   };
 
-  //* POST
-  //Crear un carrito nuevo
   saveCart = async (cart) => {
     try {
       await cartModel.create(cart);
@@ -42,26 +34,17 @@ export default class Cart {
     }
   };
 
-  //* PUT
-  //Actualizar un carrito con determinado id
   updateCart = async (idCart, cart) => {
     let result = await cartModel.findByIdAndUpdate(idCart, cart, { new: true }); //Entrego el id y entrego la data que debo actualizar
     console.log("\u001b[1;36m Cart actualizado");
     return result;
   };
 
-  //* DELETE
-  //Eliminar el carrito con un id en especifico suministrado.
   deleteCart = async (idCart) => {
     let result = await cartModel.deleteOne({ _id: `${idCart}` });
     console.log("\u001b[1;31m Cart Eliminado");
     return result;
   };
-
-  //? ----------- Metodos Productos en el carrito
-
-  //!POST PRODUCT IN CART
-  //Insertar un producto en un carrito determinado.
 
   insertProductCart = async (idCart, idProduct) => {
     try {
@@ -86,9 +69,6 @@ export default class Cart {
       throw "Error al insertar producto en carrito" + error;
     }
   };
-
-  //! UPDATE PRODUCT IN CART
-  //Teniendo en cuenta el id de un producto contenido en un carrito, se modifica.
 
   updateProductCart = async (idCart, idProduct, newQuantity) => {
     try {
@@ -126,9 +106,6 @@ export default class Cart {
     }
   };
 
-  //! DELETE PRODUCT FROM CART
-  //Eliminar un producto de un carrito especifico, con los id suministrados tanto de cart como de product.
-
   deleteProductCart = async (idCart, idProduct) => {
     {
       try {
@@ -153,9 +130,6 @@ export default class Cart {
       }
     }
   };
-
-  //! DELETE ALL PRODUCTS IN CART
-  //Eliminar todos los productos contenidos en un carrito
 
   deleteAllProductsCart = async (idCart) => {
     try {

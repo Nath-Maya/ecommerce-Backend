@@ -1,6 +1,6 @@
 import { Router } from "express";
-import userModel from "../models/users.model.js.js.js.js";
-import { authorizedToken, generateToken } from "../utils.js.js.js.js";
+import userModel from "../models/users.model.js";
+import { authorizedToken, generateToken } from "../utils/utils.js";
 import passport from "passport";
 
 const sessionRouter = Router();
