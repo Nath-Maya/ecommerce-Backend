@@ -1,31 +1,47 @@
 import { Router } from "express";
-import Users from "../dao/users.js";
+import UsersDAO from "../dao/mongo/usersDao.js";
 
-const usersRouter = Router();
-const userManager = new Users();
+const router = Router();
+const userService = new UsersDAO();
 
-
-usersRouter.get("/", async (req, res) => {
-  let users = await userManager.getAllUsers();
-  res.send(users);
-});
-
-
-usersRouter.get("/:idUser", async (req, res) => {
-  let idUser = req.params.idUser;
+router.get("/", async (req, res) => {
   try {
-    let result = await userManager.getUserById(idUser);
-    res.send({ status: "sucess", payload: result });
+    const users = await userService.getAllUsers();
+    res.send(users);
   } catch (error) {
-    console.error("User not found");
+    console.error("Error al obtener usuarios:", error);
+    res.status(500).send({ status: "error", error: "Error al obtener usuarios" });
   }
 });
 
-
-usersRouter.delete("/:idUser", async (req, res) => {
-  let { idUser } = req.params;
-  let result = await userManager.deleteUser(idUser);
-  res.send("User deleted");
+router.get("/:idUser", async (req, res) => {
+  const idUser = req.params.idUser;
+  try {
+    const result = await userService.getUserById(idUser);
+    if (result) {
+      res.send({ status: "success", payload: result });
+    } else {
+      res.status(404).send({ status: "error", error: "Usuario no encontrado" });
+    }
+  } catch (error) {
+    console.error("Error al obtener usuario por ID:", error);
+    res.status(500).send({ status: "error", error: "Error al obtener usuario por ID" });
+  }
 });
 
-export default usersRouter;
+router.delete("/:idUser", async (req, res) => {
+  const { idUser } = req.params;
+  try {
+    const result = await userService.deleteUser(idUser);
+    if (result) {
+      res.send({ status: "success", payload: "Usuario eliminado" });
+    } else {
+      res.status(404).send({ status: "error", error: "Usuario no encontrado" });
+    }
+  } catch (error) {
+    console.error("Error al eliminar usuario:", error);
+    res.status(500).send({ status: "error", error: "Error al eliminar usuario" });
+  }
+});
+
+export default router;

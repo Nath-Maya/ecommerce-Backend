@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
       stock,
     };
 
-    const result = await productService.postProduct(newProduct);
+    const result = await productService.addProduct(newProduct);
     res.json({ status: "success", payload: result });
   } catch (error) {
     console.error("Error en la ruta POST /products:", error);

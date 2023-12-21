@@ -14,14 +14,13 @@ export const createHash = (password) =>
 export const isValidPassword = (user, password) =>
   bcrypt.compareSync(password, user.password);
 
-//? TOKEN
-//Generar el token con tiempo de expiracion por 12horas
+
 export const generateToken = (user) => {
   const token = jwt.sign({ user }, KEY, { expiresIn: "1m" });
   return token;
 };
 
-//middleware que se utiliza para autenticar las solicitudes
+
 export const authorizedToken = (req, res, next) => {
   const headerAuth = req.headers.authorization;
   if (!headerAuth)
