@@ -1,32 +1,40 @@
 import { Router } from "express";
-import Message from "../dao/messages.js";
+import MessageDAO from "../dao/mongo/messagesDao.js";
 import viewRouter from "./view.routes.js";
 
-const messageRouter = Router();
-const messageManager = new Message();
+const router = Router();
+const messageService = new MessageDAO();
 
+router.post("/", async (req, res) => {
+  try {
+    const { user, message } = req.body;
 
-messageRouter.post("/", async (req, res) => {
-   let { user, message } = req.body;
-   console.log("aja")
- 
-   const newMessage = {
+    if (!user || !message) {
+      res.status(400).json({ status: "error", error: "Faltan datos en los parámetros" });
+      return;
+    }
+
+    const newMessage = {
       user: user,
       message: message
-   };
- 
-   res.send(await messageManager.sendMessage(newMessage));
- });
- 
+    };
 
+    const result = await messageService.sendMessage(newMessage);
+    res.json({ status: "success", payload: result });
+  } catch (error) {
+    console.error("Error en la ruta POST /messages:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta POST /messages" });
+  }
+});
 
- messageRouter.get("/", async (req, res) => {
-   try {
-     const messages = await messageManager.getAllMessage();
-     res.send({ status: "succes", payload: messages });
-   } catch (error) {
-     console.error("Error en la ruta GET /messages:", error);
-   }
- });
+router.get("/", async (req, res) => {
+  try {
+    const messages = await messageService.getAllMessages();
+    res.json({ status: "success", payload: messages });
+  } catch (error) {
+    console.error("Error en la ruta GET /messages:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta GET /messages" });
+  }
+});
 
- export default messageRouter;
+export default router;
