@@ -1,39 +1,33 @@
 import { Router } from "express";
-import Cart from "../dao/carts.js";
+import CartDAO from "../dao/mongo/cartsDao.js";
 
 const cartRouter = Router(); //Crear enrutador
-const cartManager = new Cart();
+const cartService = new CartDAO();
 
-//? ----------- Metodos Cart
-
-//* POST CART*/
 cartRouter.post("/", async (req, res) => {
   let newCart = req.body;
-  res.send(await cartManager.saveCart(newCart));
+  res.send(await cartService.saveCart(newCart));
 });
 
-//* GET CART*/
 cartRouter.get("/", async (req, res) => {
   try {
-    let carts = await cartManager.getAllCart();
+    let carts = await cartService.getAllCart();
     res.send({ result: "sucess", payload: carts });
   } catch (error) {
     console.log("\u001b[1;34m Error al buscar carritos" + error);
   }
 });
 
-//* GET CART BY ID */
 cartRouter.get("/:idCart", async (req, res) => {
   let idCart = req.params.idCart;
   try {
-    let carts = await cartManager.getCartId(idCart);
+    let carts = await cartService.getCartId(idCart);
     res.send({ result: "sucess", payload: carts });
   } catch (error) {
     console.log("\u001b[1;34m Carrito no encontrado" + error);
   }
 });
 
-//* UPDATE CART*/
 cartRouter.put("/:idCart", async (req, res) => {
   let { idCart } = req.params;
   let cartsToReplace = req.body;
@@ -44,15 +38,14 @@ cartRouter.put("/:idCart", async (req, res) => {
   ) {
     res.send({ status: "error", error: "No hay datos en parametros" });
   }
-  let result = await cartManager.updateCart(idCart, cartsToReplace);
+  let result = await cartService.updateCart(idCart, cartsToReplace);
   res.send({ status: "sucess", payload: result });
 });
 
-//* DELETE CART */
 cartRouter.delete("/:idCart", async (req, res) => {
   let idCart = req.params.idCart;
   try {
-    let carts = await cartManager.deleteCart(idCart);
+    let carts = await cartService.deleteCart(idCart);
     console.log("\u001b[1;34m Carrito eliminado" + error);
     res.send({ result: "sucess", payload: carts });
   } catch (error) {
@@ -60,28 +53,24 @@ cartRouter.delete("/:idCart", async (req, res) => {
   }
 });
 
-//? ----------- Metodos Products in cart
-
-//! POST PRODUCT IN CART
 cartRouter.post("/:idCart/products/:idProducts", async (req, res) => {
   let idCart = req.params.idCart;
   let idProduct = req.params.idProducts;
   try {
-    let carts = await cartManager.insertProductCart(idCart, idProduct);
+    let carts = await cartService.insertProductCart(idCart, idProduct);
     res.send({ result: "sucess", payload: carts });
   } catch (error) {
     console.log("\u001b[1;34m Error al insertar producto al carrito " + error);
   }
 });
 
-//! UPDATE PRODUCT IN CART
 cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
   let idCart = req.params.idCart;
   let idProduct = req.params.idProduct;
   let newQuantity = req.body.quantity;
 
   try {
-    const result = await cartManager.updateProductCart(
+    const result = await cartService.updateProductCart(
       idCart,
       idProduct,
       newQuantity
@@ -93,7 +82,7 @@ cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
         error
     );
   }
-  const result = await cartManager.updateProductCart(
+  const result = await cartService.updateProductCart(
     idCart,
     idProduct,
     newQuantity
@@ -101,17 +90,15 @@ cartRouter.put("/:idCart/products/:idProduct", async (req, res) => {
   res.send({ result: "sucess", payload: result });
 });
 
-//! DELETE PRODUCT IN CART
 cartRouter.delete("/:idCart/products/:idProducts", async (req, res) => {
   let idCart = req.params.idCart;
   let idProduct = req.params.idProduct;
-  res.send(await cartManager.deleteProductCart(idCart, idProduct));
+  res.send(await cartService.deleteProductCart(idCart, idProduct));
 });
 
 export default cartRouter;
 
-//! DELETE ALL PRODUCTS OF CART
 cartRouter.delete("/:idCart/products", async (req, res) => {
   let idCart = req.params.idCart;
-  res.send(await cartManager.deleteAllProductsCart(idCart));
+  res.send(await cartService.deleteAllProductsCart(idCart));
 });
