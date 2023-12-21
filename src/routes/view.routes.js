@@ -1,47 +1,63 @@
 import { Router } from "express";
-import Products from "../dao/products.js";
+import ProductDAO from "../dao/mongo/productsDao.js";
 
-const viewRouter = Router();
+const router = Router();
+const productService = new ProductDAO();
 
-const productManager = new Products();
-
-viewRouter.get("/products", async (req, res) => {
-  let products = await productManager.getAllProducts();
-  let user = req.session.user;
-  res.render("home", { products, user });
+router.get("/products", async (req, res) => {
+  try {
+    const products = await productService.getAllProducts();
+    const user = req.session.user;
+    res.render("home", { products, user });
+  } catch (error) {
+    console.error("Error al obtener productos:", error);
+    res.status(500).render("error", { error: "Error al obtener productos" });
+  }
 });
 
-viewRouter.get("/chats", async (req, res) => {
+router.get("/chats", (req, res) => {
   res.render("chats");
 });
 
-viewRouter.get("/carts", async (req, res) => {
+router.get("/carts", (req, res) => {
   res.render("carts");
 });
 
-viewRouter.get("/product/:idProduct", async (req, res) => {
-  let idProduct = req.params.idProduct;
+router.get("/product/:idProduct", async (req, res) => {
+  const idProduct = req.params.idProduct;
 
-  let result = await productManager.getProductId(idProduct);
-  res.render("product", result);
+  try {
+    const result = await productService.getProductId(idProduct);
+    res.render("product", result);
+  } catch (error) {
+    console.error(`Error al obtener producto con ID ${idProduct}:`, error);
+    res.status(500).render("error", { error: `Error al obtener producto con ID ${idProduct}` });
+  }
 });
 
-viewRouter.get("/register", (req, res) => {
+router.get("/register", (req, res) => {
   res.render("register");
 });
 
-viewRouter.get("/", (req, res) => {
-  if (req.session.user) res.redirect("/products");
-  res.render("login");
+router.get("/login", (req, res) => {
+  if (req.session.user) {
+    res.redirect("/products");
+  } else {
+    res.render("login");
+  }
 });
 
-viewRouter.get("/", (req, res) => {
-  if (!req.session.user) res.redirect("/login");
-  res.render("profile", { user: req.session.user });
+router.get("/profile", (req, res) => {
+  if (req.session.user) {
+    res.render("profile", { user: req.session.user });
+  } else {
+    res.redirect("/login");
+  }
 });
 
-viewRouter.get("/reset", async (req, res) => {
+router.get("/reset", (req, res) => {
   res.render("reset");
 });
 
-export default viewRouter;
+export default router;
+
