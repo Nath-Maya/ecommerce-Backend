@@ -11,5 +11,6 @@ export default {
   secretKey: process.env.SECRET_KEY,
   keyToken: process.env.KEY_TOKEN,
   email: process.env.EMAIL,
-  emailPassword: process.env.EMAIL_PASSWORD
+  emailPassword: process.env.EMAIL_PASSWORD,
+  tokenExpiration: process.env.TOKEN_EXPIRATION
 };
