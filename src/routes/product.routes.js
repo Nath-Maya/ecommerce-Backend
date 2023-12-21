@@ -1,44 +1,48 @@
 import { Router } from "express";
-import Product from "../dao/products.js";
+import ProductDAO from "../dao/mongo/productsDao.js";
 
-const productRouter = Router();
-const productManager = new Product();
+const router = Router();
+const productService = new ProductDAO();
 
+router.post("/", async (req, res) => {
+  try {
+    const { title, description, price, image, category, stock } = req.body;
 
-productRouter.post("/", async (req, res) => {
-  let { title, description, price, image, category, stock } = req.body;
+    const newProduct = {
+      title,
+      description,
+      price,
+      image,
+      category,
+      stock,
+    };
 
-  const newProduct = {
-    title: title,
-    description: description,
-    price: price,
-    image: image,
-    category: category,
-    stock: stock,
-  };
-
-  res.send(await productManager.postProduct(newProduct));
+    const result = await productService.postProduct(newProduct);
+    res.json({ status: "success", payload: result });
+  } catch (error) {
+    console.error("Error en la ruta POST /products:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta POST /products" });
+  }
 });
 
-
-productRouter.get("/products", async (req, res) => {
+router.get("/products", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const pageSize = 10;
 
-    const totalProducts = await productManager.getAllProducts();
+    const totalProducts = await productService.getAllProducts();
     const totalPages = Math.ceil(totalProducts / pageSize);
 
     const skip = (page - 1) * pageSize;
 
-    const products = await productManager.getProductsPage(page, pageSize);
+    const products = await productService.getProductsPage(page, pageSize);
     const response = {
       status: "success",
       payload: products,
-      totalPages: totalPages,
+      totalPages,
       prevPage: page > 1 ? page - 1 : null,
       nextPage: page < totalPages ? page + 1 : null,
-      page: page,
+      page,
       hasPrevPage: page > 1,
       hasNextPage: page < totalPages,
       prevLink: page > 1 ? `/products/?page=${page - 1}` : null,
@@ -48,77 +52,96 @@ productRouter.get("/products", async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error("Error en la ruta GET /products:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta GET /products" });
   }
 });
 
-
-
-productRouter.get("/:idProduct", async (req, res) => {
-  let idProduct = req.params.idProduct;
+router.get("/:idProduct", async (req, res) => {
+  const idProduct = req.params.idProduct;
   try {
-    let result = await productManager.getProductId(idProduct);
-    res.send({ status: "succes", payload: result });
+    const result = await productService.getProductId(idProduct);
+    res.json({ status: "success", payload: result });
   } catch (error) {
-    console.error("Producto no encontrado");
+    console.error("Producto no encontrado:", error);
+    res.status(404).json({ status: "error", error: "Producto no encontrado" });
   }
 });
 
-
-
-productRouter.get("/sample-products", async (req, res) => {
-  let limit = 10;
+router.get("/sample-products", async (req, res) => {
+  const limit = 10;
   try {
-    const products = await productManager.getProductsLimit(limit);
-    res.send({ status: "succes", payload: products });
+    const products = await productService.getProductsLimit(limit);
+    res.json({ status: "success", payload: products });
   } catch (error) {
-    console.error("Error en la ruta GET /products:", error);
+    console.error("Error en la ruta GET /sample-products:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta GET /sample-products" });
   }
 });
 
-
-
-productRouter.get("/page-products/:page", async (req, res) => {
+router.get("/page-products/:page", async (req, res) => {
   let page = parseInt(req.params.page);
   page = isNaN(page) || page <= 0 ? 1 : page;
 
   const productByPage = 15;
-  res.send(await productManager.getProductsPage(page, productByPage));
+  try {
+    const result = await productService.getProductsPage(page, productByPage);
+    res.json({ status: "success", payload: result });
+  } catch (error) {
+    console.error("Error en la ruta GET /page-products/:page:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta GET /page-products/:page" });
+  }
 });
 
-
-
-productRouter.get("/query/:query", async (req, res) => {
-  const query = req.query.query;
-  res.send(await productManager.getProductQuery(query));
+router.get("/query/:query", async (req, res) => {
+  const query = req.params.query;
+  try {
+    const result = await productService.getProductQuery(query);
+    res.json({ status: "success", payload: result });
+  } catch (error) {
+    console.error("Error en la ruta GET /query/:query:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta GET /query/:query" });
+  }
 });
 
-
-productRouter.get("/sort/:sort", async (req, res) => {
+router.get("/sort/:sort", async (req, res) => {
   const sort = req.params.sort;
-  const sortOrder =
-    parseInt(sort) === 1 || parseInt(sort) === -1
-      ? parseInt(sort) === -1
-        ? "desc"
-        : "asc"
-      : "asc";
+  const sortOrder = parseInt(sort) === 1 || parseInt(sort) === -1
+    ? parseInt(sort) === -1
+      ? "desc"
+      : "asc"
+    : "asc";
 
-  res.send(await productManager.getProductOrder(sortOrder));
+  try {
+    const result = await productService.getProductOrder(sortOrder);
+    res.json({ status: "success", payload: result });
+  } catch (error) {
+    console.error("Error en la ruta GET /sort/:sort:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta GET /sort/:sort" });
+  }
 });
 
+router.put("/:idProduct", async (req, res) => {
+  const { idProduct } = req.params;
+  const productReplace = req.body;
 
-productRouter.put("/:idProduct", async (req, res) => {
-  let { idProduct } = req.params;
-  let productReplace = req.body;
-
-  let result = await productManager.updateProduct(idProduct, productReplace);
-  res.send({ status: "sucess", payload: result });
+  try {
+    const result = await productService.updateProduct(idProduct, productReplace);
+    res.json({ status: "success", payload: result });
+  } catch (error) {
+    console.error("Error en la ruta PUT /:idProduct:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta PUT /:idProduct" });
+  }
 });
 
-
-productRouter.delete("/:idProduct", async (req, res) => {
-  let { idProduct } = req.params;
-  let result = await productManager.deleteProduct(idProduct);
-  res.send("Producto Eliminado");
+router.delete("/:idProduct", async (req, res) => {
+  const { idProduct } = req.params;
+  try {
+    await productService.deleteProduct(idProduct);
+    res.json({ status: "success", payload: "Producto Eliminado" });
+  } catch (error) {
+    console.error("Error en la ruta DELETE /:idProduct:", error);
+    res.status(500).json({ status: "error", error: "Error en la ruta DELETE /:idProduct" });
+  }
 });
 
-export default productRouter;
+export default router;
