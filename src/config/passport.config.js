@@ -1,9 +1,9 @@
 import passport from "passport";
 import local from "passport-local";
-import Users from "../dao/users.js";
-import { createHash, generateToken, isValidPassword } from "./utils/utils.js";
+import UsersDAO from "../dao/mongo/usersDao.js";
+import { createHash, generateToken, isValidPassword } from "../utils/utils.js";
 import gitHubStrategy from "passport-github2";
-import userModel from "../dao/mongo/models/users.model.js";
+import userModel from "../dao/models/users.model.js";
 import jwt from "passport-jwt";
 import config from "./config.js";
 
@@ -11,22 +11,17 @@ const JwtStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
 const LocalStrategy = local.Strategy;
 
-const userService = new Users();
+const userService = new UsersDAO();
 
-//!COOKIE EXTRACTOR
-
-const cookieExtractor = req =>{
-  let token = null
-  if(req && req.cookies){
-      token = req.cookies["token"]
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies["token"];
   }
-  return token
-}
+  return token;
+};
 
-//! STRATEGY PASSPORT
 export const initializatedPassport = () => {
-  //* JWT
-
   passport.use(
     "jwt",
     new JwtStrategy(
@@ -43,8 +38,6 @@ export const initializatedPassport = () => {
       }
     )
   );
-
-  //* -----REGISTER
 
   passport.use(
     "register",
@@ -82,8 +75,6 @@ export const initializatedPassport = () => {
     )
   );
 
-  //* -----LOGIN
-
   passport.use(
     "login",
     new LocalStrategy(
@@ -106,7 +97,6 @@ export const initializatedPassport = () => {
     )
   );
 
-  //* SERIALIZE - DESERIALIZE
   passport.serializeUser((user, done) => {
     done(null, user._id);
   });
@@ -121,7 +111,6 @@ export const initializatedPassport = () => {
   });
 };
 
-//! STRATEGY GITHUB
 export const initPassportGit = () => {
   passport.serializeUser((user, done) => {
     done(null, user._id);

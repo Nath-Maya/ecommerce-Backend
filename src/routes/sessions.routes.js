@@ -1,5 +1,5 @@
 import { Router } from "express";
-import userModel from "../models/users.model.js";
+import userModel from "../dao/models/users.model.js";
 import { authorizedToken, generateToken } from "../utils/utils.js";
 import passport from "passport";
 

@@ -1,4 +1,4 @@
-import userModel from "./mongo/models/users.model.js.js";
+import userModel from "../models/users.model.js";
 
 export default class UsersDAO {
   constructor() {}

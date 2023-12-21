@@ -22,7 +22,7 @@ const sendEmail = async (ticket) => {
 
     const emailContent = {
       from: EMAIL,
-      to: "natha.maya.ramirez93@gmail.com", //`${userEmail}`,
+      to: `${EMAIL}`,
       subject: "Thanks for your order",
       html: `<div>
 				<p>Your order was processed</p>
