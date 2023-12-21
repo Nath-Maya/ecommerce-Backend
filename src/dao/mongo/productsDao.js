@@ -3,31 +3,40 @@ import productModel from "../models/products.model.js";
 export default class ProductDAO {
   constructor() {}
 
-
-  postProduct = async (product) => {
-    let result = await productModel.create(product);
-    console.log("\u001b[1;36m Producto guardado");
-    return result;
+  addProduct = async (product) => {
+    try {
+      await productModel.create(product);
+      return "Producto agregado";
+    } catch (error) {
+      console.error("Error al agregar el producto", error.message);
+      throw new Error("Error al agregar el producto");
+    }
   };
 
-
   getAllProducts = async () => {
-    let result = await productModel.find().lean();
-    return result;
+    try {
+      let result = await productModel.find().lean();
+      return result;
+    } catch (error) {
+      console.error("Error al obtener productos", error.message);
+      throw new Error("Error al obtener productos");
+    }
   };
 
   getProductId = async (idProduct) => {
-    let result = await productModel.findById(idProduct);
-    console.log("\u001b[1;36m Producto Encontrado");
-    return result;
-  
-  }
+    try {
+      let result = await productModel.findById(idProduct);
+      return result;
+    } catch (error) {
+      console.error("Producto no encontrado", error.message);
+      throw new Error("Producto no encontrado");
+    }
+  };
 
   getProductsLimit = async (limit) => {
     try {
       const products = await productModel.find().limit(limit);
       limit = products.length < limit ? products.length : limit;
-
       return products;
     } catch (error) {
       throw error;
@@ -64,20 +73,28 @@ export default class ProductDAO {
       return products;
     } catch (error) {
       throw new Error(`Error al ordenar productos: ${error.message}`);
-    } 
+    }
   };
 
   updateProduct = async (idProduct, product) => {
-    let result = await productModel.findByIdAndUpdate(idProduct, product, {
-      new: true,
-    }); //Entrego el id y entrego la data que debo actualizar
-    console.log("\u001b[1;36m Producto actualizado");
-    return result;
+    try {
+      let result = await productModel.findByIdAndUpdate(idProduct, product, {
+        new: true,
+      });
+      return result;
+    } catch (error) {
+      console.error("Producto no actualizado", error.message);
+      throw new Error("Producto no actualizado");
+    }
   };
 
   deleteProduct = async (idProduct) => {
-    let result = await productModel.deleteOne({ _id: idProduct });
-    console.log("\u001b[1;31m Producto Eliminado");
-    return result;
+    try {
+      let result = await productModel.deleteOne({ _id: idProduct });
+      return result;
+    } catch (error) {
+      console.error("Producto no eliminado", error.message);
+      throw new Error("Producto no eliminado");
+    }
   };
 }
