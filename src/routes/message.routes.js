@@ -5,7 +5,7 @@ import viewRouter from "./view.routes.js";
 const messageRouter = Router();
 const messageManager = new Message();
 
-//!!  SEND MENSAJE
+
 messageRouter.post("/", async (req, res) => {
    let { user, message } = req.body;
    console.log("aja")
@@ -18,7 +18,7 @@ messageRouter.post("/", async (req, res) => {
    res.send(await messageManager.sendMessage(newMessage));
  });
  
- //!!  GET MESSAGES
+
 
  messageRouter.get("/", async (req, res) => {
    try {

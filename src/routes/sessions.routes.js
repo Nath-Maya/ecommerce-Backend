@@ -5,7 +5,6 @@ import passport from "passport";
 
 const sessionRouter = Router();
 
-//!   REGISTER
 
 sessionRouter.post(
   "/register",
@@ -18,7 +17,7 @@ sessionRouter.get("/failedregister", async (req, res) => {
   res.send({ error: "Failed register." });
 });
 
-//!   LOGIN
+
 
 sessionRouter.post(
   "/login",
@@ -47,7 +46,7 @@ sessionRouter.get("/failedloginauth", async (req, res) => {
   res.status(400).send({ status: 400, error: "Failed Login." });
 });
 
-//! LOGOUT
+
 
 sessionRouter.get("/logout", async (req, res) => {
   req.session.destroy((error) => {
@@ -58,7 +57,7 @@ sessionRouter.get("/logout", async (req, res) => {
   });
 });
 
-//! GITHUB
+
 
 sessionRouter.get(
   "/github",

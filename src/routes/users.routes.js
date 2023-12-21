@@ -4,15 +4,13 @@ import Users from "../dao/users.js";
 const usersRouter = Router();
 const userManager = new Users();
 
-//!   GET USERS
-//Consultar los usuarios registrados
+
 usersRouter.get("/", async (req, res) => {
   let users = await userManager.getAllUsers();
   res.send(users);
 });
 
-//!   GET USER BY ID
-//Consulta de un usuario en especifico
+
 usersRouter.get("/:idUser", async (req, res) => {
   let idUser = req.params.idUser;
   try {
@@ -23,8 +21,7 @@ usersRouter.get("/:idUser", async (req, res) => {
   }
 });
 
-//!   DELETE USER
-//Eliminar un usuario con el id.
+
 usersRouter.delete("/:idUser", async (req, res) => {
   let { idUser } = req.params;
   let result = await userManager.deleteUser(idUser);

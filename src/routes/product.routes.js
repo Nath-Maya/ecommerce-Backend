@@ -4,8 +4,7 @@ import Product from "../dao/products.js";
 const productRouter = Router();
 const productManager = new Product();
 
-//!!  POST PRODUCT
-//Agregar un producto
+
 productRouter.post("/", async (req, res) => {
   let { title, description, price, image, category, stock } = req.body;
 
@@ -21,8 +20,7 @@ productRouter.post("/", async (req, res) => {
   res.send(await productManager.postProduct(newProduct));
 });
 
-//!!  GET PRODUCTS
-// Consulta de todos los productos con límite opcional
+
 productRouter.get("/products", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -53,7 +51,7 @@ productRouter.get("/products", async (req, res) => {
   }
 });
 
-//! GET PRODUCT ID
+
 
 productRouter.get("/:idProduct", async (req, res) => {
   let idProduct = req.params.idProduct;
@@ -65,7 +63,7 @@ productRouter.get("/:idProduct", async (req, res) => {
   }
 });
 
-//! GET LIMIT
+
 
 productRouter.get("/sample-products", async (req, res) => {
   let limit = 10;
@@ -77,7 +75,7 @@ productRouter.get("/sample-products", async (req, res) => {
   }
 });
 
-//! GET PAGE
+
 
 productRouter.get("/page-products/:page", async (req, res) => {
   let page = parseInt(req.params.page);
@@ -87,15 +85,14 @@ productRouter.get("/page-products/:page", async (req, res) => {
   res.send(await productManager.getProductsPage(page, productByPage));
 });
 
-//! GET QUERY
+
 
 productRouter.get("/query/:query", async (req, res) => {
   const query = req.query.query;
   res.send(await productManager.getProductQuery(query));
 });
 
-//!GET SORT
-// Para valores de mayor a menor, pasar el -1 , y para valores de menor a mayor pasar el 1
+
 productRouter.get("/sort/:sort", async (req, res) => {
   const sort = req.params.sort;
   const sortOrder =
@@ -108,8 +105,7 @@ productRouter.get("/sort/:sort", async (req, res) => {
   res.send(await productManager.getProductOrder(sortOrder));
 });
 
-//!!  UPDATE PRODUCT
-//Actualizar un producto
+
 productRouter.put("/:idProduct", async (req, res) => {
   let { idProduct } = req.params;
   let productReplace = req.body;
@@ -118,8 +114,7 @@ productRouter.put("/:idProduct", async (req, res) => {
   res.send({ status: "sucess", payload: result });
 });
 
-//!!  DELETE PRODUCT
-//Eliminar un producto
+
 productRouter.delete("/:idProduct", async (req, res) => {
   let { idProduct } = req.params;
   let result = await productManager.deleteProduct(idProduct);
