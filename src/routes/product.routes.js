@@ -1,10 +1,11 @@
 import { Router } from "express";
 import ProductDAO from "../dao/mongo/productsDao.js";
+import { isAdmin } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const productService = new ProductDAO();
 
-router.post("/", async (req, res) => {
+router.post("/", isAdmin, async (req, res) => {
   try {
     const { title, description, price, image, category, stock } = req.body;
 
@@ -120,7 +121,7 @@ router.get("/sort/:sort", async (req, res) => {
   }
 });
 
-router.put("/:idProduct", async (req, res) => {
+router.put("/:idProduct", isAdmin,  async (req, res) => {
   const { idProduct } = req.params;
   const productReplace = req.body;
 
@@ -133,7 +134,7 @@ router.put("/:idProduct", async (req, res) => {
   }
 });
 
-router.delete("/:idProduct", async (req, res) => {
+router.delete("/:idProduct", isAdmin,  async (req, res) => {
   const { idProduct } = req.params;
   try {
     await productService.deleteProduct(idProduct);

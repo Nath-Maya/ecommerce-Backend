@@ -1,21 +1,24 @@
 import { Router } from "express";
 import MessageDAO from "../dao/mongo/messagesDao.js";
 import viewRouter from "./view.routes.js";
+import { isUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const messageService = new MessageDAO();
 
-router.post("/", async (req, res) => {
+router.post("/",isUser, async (req, res) => {
   try {
     const { user, message } = req.body;
 
-    if (!user || !message) {
+    if (!message) {
       res.status(400).json({ status: "error", error: "Faltan datos en los parámetros" });
       return;
     }
 
+    const authenticatedUser = req.session.user;
+
     const newMessage = {
-      user: user,
+      user: authenticatedUser.username,
       message: message
     };
 

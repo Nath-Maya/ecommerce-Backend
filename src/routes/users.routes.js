@@ -29,6 +29,18 @@ router.get("/:idUser", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  try {
+    const newUser = req.body;
+    const result = await userService.saveUser(newUser);
+    res.status(201).send({ status: "success", payload: result });
+  } catch (error) {
+    console.error("Error al guardar usuario:", error);
+    res.status(500).send({ status: "error", error: "Error al guardar usuario" });
+  }
+});
+
+
 router.delete("/:idUser", async (req, res) => {
   const { idUser } = req.params;
   try {

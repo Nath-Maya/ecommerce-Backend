@@ -1,5 +1,6 @@
 import { Router } from "express";
 import CartDAO from "../dao/mongo/cartsDao.js";
+import { isUser } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const cartService = new CartDAO();
@@ -66,7 +67,7 @@ router.delete("/:idCart", async (req, res) => {
   }
 });
 
-router.post("/:idCart/products/:idProduct", async (req, res) => {
+router.post("/:idCart/products/:idProduct",isUser, async (req, res) => {
   const idCart = req.params.idCart;
   const idProduct = req.params.idProduct;
   try {
@@ -78,7 +79,7 @@ router.post("/:idCart/products/:idProduct", async (req, res) => {
   }
 });
 
-router.put("/:idCart/products/:idProduct", async (req, res) => {
+router.put("/:idCart/products/:idProduct",isUser, async (req, res) => {
   const idCart = req.params.idCart;
   const idProduct = req.params.idProduct;
   const newQuantity = req.body.quantity;
@@ -92,7 +93,7 @@ router.put("/:idCart/products/:idProduct", async (req, res) => {
   }
 });
 
-router.delete("/:idCart/products/:idProduct", async (req, res) => {
+router.delete("/:idCart/products/:idProduct", isUser, async (req, res) => {
   const idCart = req.params.idCart;
   const idProduct = req.params.idProduct;
 

@@ -16,7 +16,7 @@ form.addEventListener("submit", (e) => {
   }).then((result) => {
     if (result.status === 200) {
       window.location.replace("/products");
-<<<<<<< HEAD
+
     } else {
       Swal.fire({
         icon: "error",
@@ -24,8 +24,6 @@ form.addEventListener("submit", (e) => {
         text: "Usuario No encontrado!",
         footer: '<a href="/register">Registrese aqui</a>',
       });
-=======
->>>>>>> main
     }
   });
 });
