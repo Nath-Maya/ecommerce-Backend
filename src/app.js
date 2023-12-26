@@ -8,9 +8,11 @@ import chalk from "chalk";
 import FileStore from "session-file-store";
 import passport from "passport";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 // Fuentes de metodos, informacion y vistas.
-import __dirname from "./utils/utils.js";
 import cartRouter from "./routes/cart.routes.js";
 import productRouter from "./routes/product.routes.js";
 import viewsRouter from "./routes/view.routes.js";
@@ -24,6 +26,10 @@ import {
 import config from "./config/config.js";
 import sendEmail from "./service/mailing.js";
 
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 //Inicializar variables del Servidor
 const app = express();
 const PORT = config.port;
@@ -33,9 +39,10 @@ const fileStorage = FileStore(session);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //middleware
-app.use(express.static(__dirname + "/public")); //Rutas
+app.use("/", express.static(path.join(__dirname + "/public"))); //Rutas
 app.use(cookieParser());
 
+/*
 const ticket = {
   code: 0,
   purchase_datetime: 0,
@@ -45,7 +52,7 @@ const ticket = {
 };
 
 await sendEmail(ticket);
-
+*/
 //Validar conexion a la base de datos
 mongoose
   .connect(config.mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -74,9 +81,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.engine("handlebars", handlebars.engine());
-app.set("views", __dirname + "/views");
-app.set("view engine", "handlebars");
 
+app.set("view engine", "handlebars");
+// app.set("views", path.resolve(__dirname + "/views"));
+app.set('views',__dirname+'/views')
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
 app.use("/", viewsRouter);

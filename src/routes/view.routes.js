@@ -31,7 +31,11 @@ router.get("/product/:idProduct", async (req, res) => {
     res.render("product", result);
   } catch (error) {
     console.error(`Error al obtener producto con ID ${idProduct}:`, error);
-    res.status(500).render("error", { error: `Error al obtener producto con ID ${idProduct}` });
+    res
+      .status(500)
+      .render("error", {
+        error: `Error al obtener producto con ID ${idProduct}`,
+      });
   }
 });
 
@@ -43,7 +47,7 @@ router.get("/login", (req, res) => {
   if (req.session.user) {
     res.redirect("/products");
   } else {
-    res.render("login");
+    res.render("login"); 
   }
 });
 
@@ -55,9 +59,12 @@ router.get("/profile", (req, res) => {
   }
 });
 
+router.get("/", (req, res) => {
+    res.render("login")
+  
+});
 router.get("/reset", (req, res) => {
-  res.render("reset");
+  res.render("reset"); 
 });
 
 export default router;
-
