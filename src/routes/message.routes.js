@@ -1,12 +1,12 @@
 import { Router } from "express";
 import MessageDAO from "../dao/mongo/messagesDao.js";
 import viewRouter from "./view.routes.js";
-import { isUser } from "../middlewares/auth.middleware.js";
+import { anyRole } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 const messageService = new MessageDAO();
 
-router.post("/",isUser, async (req, res) => {
+router.post("/",anyRole, async (req, res) => {
   try {
     const { user, message } = req.body;
 

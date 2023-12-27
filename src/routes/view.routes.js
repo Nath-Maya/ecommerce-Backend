@@ -5,14 +5,15 @@ const router = Router();
 const productService = new ProductDAO();
 
 router.get("/products", async (req, res) => {
-  try {
+ // try {
     const products = await productService.getAllProducts();
-    const user = req.session.user;
-    res.render("home", { products, user });
-  } catch (error) {
+    //const user = req.session.user;
+    //console.log( user + 'lego el usuerio ')
+   // res.render("home", { products });
+ /* } catch (error) {
     console.error("Error al obtener productos:", error);
     res.status(500).render("error", { error: "Error al obtener productos" });
-  }
+  }*/
 });
 
 router.get("/chats", (req, res) => {
@@ -23,7 +24,7 @@ router.get("/carts", (req, res) => {
   res.render("carts");
 });
 
-router.get("/product/:idProduct", async (req, res) => {
+router.get("/products/:idProduct", async (req, res) => {
   const idProduct = req.params.idProduct;
 
   try {
@@ -45,7 +46,7 @@ router.get("/register", (req, res) => {
 
 router.get("/login", (req, res) => {
   if (req.session.user) {
-    res.redirect("/products");
+    res.redirect("/product");
   } else {
     res.render("login"); 
   }

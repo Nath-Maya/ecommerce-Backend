@@ -174,7 +174,7 @@ class ViewController {
     const email = req.body.email;
 
     try {
-      let user = await usersModel.findOne({ email: email });
+      let user = await userModel.findOne({ email: email });
 
       if (!user) {
         return res.status(404).send({ message: "user not found" });
@@ -183,7 +183,7 @@ class ViewController {
       await tokenModel.create({ token: token });
 
       const mailOptions = {
-        from: "nachocodertest@gmail.com",
+        from: "natha.maya.ramirez93@gmail.com",
         to: email,
         subject: "Restablecer contraseña",
         text: `Para restablecer tu contraseña, haz clic en el siguiente enlace: 
@@ -206,7 +206,7 @@ class ViewController {
     let newPassword = req.body.password; 
 
     try {
-      const usuario = await usersModel.findOne({ email: user });
+      const usuario = await userModel.findOne({ email: user });
 
       if (!usuario) {
         req.logger.error("User not found");
@@ -219,7 +219,7 @@ class ViewController {
         return;
       }
       newPassword = createHash(newPassword);
-      const result = await usersModel.updateOne(
+      const result = await userModel.updateOne(
         { email: user },
         { password: newPassword }
       );

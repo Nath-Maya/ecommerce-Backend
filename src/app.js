@@ -30,6 +30,7 @@ import sendEmail from "./service/mailing.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+
 //Inicializar variables del Servidor
 const app = express();
 const PORT = config.port;
@@ -39,7 +40,7 @@ const fileStorage = FileStore(session);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //middleware
-app.use("/", express.static(path.join(__dirname + "/public"))); //Rutas
+app.use(express.static(__dirname + "/public")); //Rutas
 app.use(cookieParser());
 
 /*
@@ -83,7 +84,6 @@ app.use(passport.session());
 app.engine("handlebars", handlebars.engine());
 
 app.set("view engine", "handlebars");
-// app.set("views", path.resolve(__dirname + "/views"));
 app.set('views',__dirname+'/views')
 app.use("/products", productRouter);
 app.use("/cart", cartRouter);
@@ -91,14 +91,7 @@ app.use("/", viewsRouter);
 app.use("/message", messageRouter);
 app.use("/session", sessionRouter);
 app.use("/users", usersRouter);
-/*
-app.use("/products", productRouter);
-app.use("/cart", cartRouter);
-app.use("/", viewsRouter);
-app.use("/message", messageRouter);
-app.use("/session", sessionRouter);
-app.use("/users", usersRouter);
-*/
+
 app.listen(PORT, () => {
   console.log(chalk.bgYellowBright.black.bold(`SERVER UP : ${PORT}`));
 });

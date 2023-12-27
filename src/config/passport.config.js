@@ -49,10 +49,10 @@ export const initializatedPassport = () => {
           let user = await userModel.findOne({ email: username });
           if (user) {
             return done(null, false, {
-              message: "User already exist",
+              message: "User already exists",
             });
           }
-
+  
           const newUser = {
             first_name,
             last_name,
@@ -61,12 +61,9 @@ export const initializatedPassport = () => {
             password: createHash(password),
           };
           let result = await userModel.create(newUser);
-
-          //* Token
-          const accessToken = generateToken(user);
-          console.log(acessToken);
-          res.send({ status: "sucess", accessToken });
-
+  
+          // Aquí no debes enviar la respuesta. Deja que Passport maneje la respuesta.
+  
           return done(null, result);
         } catch (error) {
           return done("Error de usuario: " + error);
@@ -74,6 +71,42 @@ export const initializatedPassport = () => {
       }
     )
   );
+  
+
+  // passport.use(
+  //   "register",
+  //   new LocalStrategy(
+  //     { passReqToCallback: true, usernameField: "email", session: false },
+  //     async (req, username, password, done) => {
+  //       const { first_name, last_name, email, age } = req.body;
+  //       try {
+  //         let user = await userModel.findOne({ email: username });
+  //         if (user) {
+  //           return done(null, false, {
+  //             message: "User already exist",
+  //           });
+  //         }
+
+  //         const newUser = {
+  //           first_name,
+  //           last_name,
+  //           email,
+  //           age,
+  //           password: createHash(password),
+  //         };
+  //         let result = await userModel.create(newUser);
+
+  //         const accessToken = generateToken(user);
+  //         console.log(accessToken);
+  //         res.send({ status: "sucess", accessToken });
+
+  //         return done(null, result);
+  //       } catch (error) {
+  //         return done("Error de usuario: " + error);
+  //       }
+  //     }
+  //   )
+  // );
 
   passport.use(
     "login",

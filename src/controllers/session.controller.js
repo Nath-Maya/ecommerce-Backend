@@ -2,7 +2,7 @@ import UsersDAO from "../dao/mongo/usersDao.js";
 import UserDTO from "../dto/user.dto.js";
 import { createHash, isValidPassword } from "../utils/utils.js";
 import userModel from "../dao/models/users.model.js";
-import { addLogger } from "../../utils/logger.js";
+// import { addLogger } from "../../utils/logger.js";
 
 
 class SessionController{
@@ -19,9 +19,12 @@ class SessionController{
     }
     async login (req,res){ 
         const {email , password} = req.body
-        try {
+       
             const currentDate = new Date()
-            await usersModel.updateOne({_id:req.user._id},{last_connection: currentDate })
+            console.log('mostrame tus datos' +email + password)
+            await userModel.findOne({email})
+            await userModel.updateOne({_id:req.user._id},{last_connection: currentDate })
+            console.log('llegue')
             if (!req.user) return res.status(400).send({status:"error", error:"Wrong password"})
             req.session.user={
             first_name:req.user.first_name,
@@ -29,27 +32,24 @@ class SessionController{
             age: req.user.age,
             email:req.user.email,
             password:req.user.password,
-            cart:req.user.cart._id,
-            role:req.user.role}
+           // cart:req.user.cart._id,
+            rol:req.user.rol}
             res.send({status:"success",payload: req.user})
             
-        } catch (error) {
-            return res.status(400).send({status:"error", error:"login failed"})            
-        }
         
     }
     async failLogin(req,res){        
         
         res.status(401).json({ message: "Credenciales incorrectas" });
-       // res.redirect("/")
+       //res.redirect("/")
     
     }
     async recoverPass (req,res){
         const {email,password} = req.body
         if (!email||!password) return res.status(400).send({status:"error", error:"Missing user credentials"})
-        const user = await usersModel.findOne({email})
+        const user = await userModel.findOne({email})
         if (!user) return res.status(400).send({status:"error",error:"Incorrect credentials"})
-        await usersModel.updateOne({ _id: user._id}, { password: createHash(password) })    
+        await userModel.updateOne({ _id: user._id}, { password: createHash(password) })    
         return res.status(200).send({status:"ok",message:"Contraseña actualizada"})
     }
     async currentUser(req,res){

@@ -1,34 +1,86 @@
-/*
-const roleAuth = (role) => {
-  return async (req, res, next) => {
-    const user = req.user;
-    if (!user || req.role !== role)
-      return res.status(401).json({ status: "Error", message: "No auth" });
-    next();
-  };
-};
+import tokenModel from "../dao/models/token.model.js";
+import Toastify from 'toastify-js'
 
-export default roleAuth;
-*/
+export function anyRole(req,res,next){
+    if (process.env.MODO === "TEST") next();
+    else{
+    const user = req.session.user;
+    if (user && (user.role === 'usuario' || user.role === 'admin' || user.role === 'premium') ) next();
+    else {
+          
+       res.redirect("/session/faillogin")}
+}}
 
-const isAdmin = (req, res, next) => {
-  const user = req.session.user;
+export function userRole(req,res,next){
+    if (process.env.MODO === "TEST") next();
+    else{
+    const user = req.session.user;
+    if (user && user.role === 'usuario') next();
+    else res.status(403).send("access denied,must be user")
+}}
 
-  if (!user || user.role !== 'admin') {
-    return res.status(403).json({ message: 'Forbidden' });
-  }
+export function adminRole(req,res,next){
+    if (process.env.MODO === "TEST") next()
+    else{
+    const user = req.session.user;
+    if (user && user.role === 'admin') next();
+    else res.status(403).send("access denied, must be admin")}
+}
+export function premiumRole(req,res,next){
+    if (process.env.MODO === "TEST") next();
+    else{
+    const user = req.session.user;
+    if (user && (user.role === 'premium'|| user.role === 'admin' )) next();
+    else res.status(403).send("access denied, must be premium or admin")}
+}
 
-  next();
-};
+export function notAdmin(req,res,next){
+    if (process.env.MODO === "TEST") next()
+    else{
+    const user = req.session.user;
+    if (user && !(user.role === 'admin')) next();
+    else res.status(403).send("access denied, must be admin")}
+}
+export async function checkToken(req,res,next){
+    const token = req.query.token
+    if (!token) return res.status(403).send("access denied empty token")
+    else{
+        const access = await tokenModel.findOne({token: token})
+        if (!access) {
+        res.status(403).send("access denied wrong token")
+        return}
+        let currentTime = new Date().getTime()
+        let tokenTime = access.date.getTime()
+        
+        if ((currentTime - tokenTime) >= 3600000){
+            res.status(403).send("access denied token expired")
+            await tokenModel.deleteOne({token: token})
+            return
+        }
+        else{
+            next()
+        }
+    }
+}
 
-const isUser = (req, res, next) => {
-  const user = req.session.user;
-
-  if (!user || user.role !== 'user') {
-    return res.status(403).json({ message: 'Forbidden' });
-  }
-
-  next();
-};
-
-export { isAdmin, isUser };
+export async function checkResetPassToken(req,res,next){
+    const token = req.query.token
+    if (!token) res.status(403).send("access denied empty token")
+    else{
+        const access = await tokenModel.findOne({token: token})
+        if (!access) {
+        res.status(403).send("access denied wrong token")
+        return}
+        let currentTime = new Date().getTime()
+        let tokenTime = access.date.getTime()
+        await tokenModel.deleteOne({token: token})
+        if (currentTime - tokenTime >= 3600000){
+            res.status(403).send("access denied token expired please start this process again")
+            return
+        }
+        else{
+            res.status(200).send("success")
+            next()
+        }
+    }
+}

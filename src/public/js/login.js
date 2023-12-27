@@ -11,19 +11,25 @@ form.addEventListener("submit", (e) => {
     method: "POST",
     body: JSON.stringify(obj),
     headers: {
-      "Content-Type": "application/json",
+      "Content-type": "application/json",
     },
-  }).then((result) => {
-    if (result.status === 200) {
-      window.location.replace("/products");
-
-    } else {
+  })
+    .then((result) => {
+      if (result.status === 200) {
+        window.location.replace("/products");
+        throw new Error("Ruta no encontrada en el servidor");
+      } else {
+        // Aquí manejas el caso de error
+        return result.json(); 
+      }
+    })
+    .then((errorBody) => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "Usuario No encontrado!",
-        footer: '<a href="/register">Registrese aqui</a>',
+        footer: '<a href="/register">Registrese aquí</a>',
       });
-    }
-  });
+    })
+    .catch((error) => console.error(error));
 });
