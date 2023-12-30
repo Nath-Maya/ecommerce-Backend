@@ -2,53 +2,42 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
 </head>
 
 <body>
+    <button class="w-2/3 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md mt-3"
+        onclick="location.href='/login'">
+        Ir a login
+    </button>
 
-  <div class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 shadow-md rounded-md w-96">
-      <h1 class="text-2xl font-bold mb-4">Registro</h1>
-      <form id="registerForm" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-600">Nombre</label>
-          <input name="first_name" type="text" class="mt-1 p-2 w-full border rounded-md" />
+    <div class="container mt-6">
+        <div class="field">
+            <form action="/register" method="post"
+                class="control has-icons-left has-icons-right w-2/3 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mx-auto">
+                <label class="label">Nuevo Usuario</label>
+                <input type="text" name="first_name" placeholder="Nombre"
+                    class="input is-success mt-3 placeholder-gray-500"></input>
+                <input type="text" name="last_name" placeholder="Apellido"
+                    class="input is-success mt-3 placeholder-gray-500"></input>
+                <input type="number" name="age" placeholder="Edad"
+                    class="input is-success mt-3 placeholder-gray-500" min="0" max="100"></input>
+                <input type="email" name="email" placeholder="Email"
+                    class="input is-success mt-3 placeholder-gray-500" required></input>
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+                <input type="password" name="password" placeholder="Crea una contraseña"
+                    class="input is-success mt-3 placeholder-gray-500" required></input>
+                <button type="submit"
+                    class="w-full bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md mt-3">
+                    Registrarme
+                </button>
+            </form>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600">Apellido</label>
-          <input name="last_name" type="text" class="mt-1 p-2 w-full border rounded-md" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600">Email</label>
-          <input name="email" type="email" class="mt-1 p-2 w-full border rounded-md" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600">Edad</label>
-          <input name="age" type="text" class="mt-1 p-2 w-full border rounded-md" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600">Contraseña</label>
-          <input name="password" type="password" class="mt-1 p-2 w-full border rounded-md" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600">Rol</label>
-          <input name="rol" type="text" class="mt-1 p-2 w-full border rounded-md" />
-        </div>
-        <button type="submit"
-          class="w-2/3 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md">
-          Registrarse
-        </button>
-      </form>
-      <p class="mt-4 text-sm">
-        ¿Ya tienes una cuenta? <a href="/" class="text-blue-500 hover:text-blue-700">Ingresa aquí</a>
-      </p>
     </div>
-  </div>
-  <script type="module" src="/js/register.js"></script>
 </body>
 
 </html>

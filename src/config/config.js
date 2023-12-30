@@ -1,16 +1,18 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 dotenv.config();
 
-export default {
-  port:process.env.PORT,
-  mongoUrl:process.env.MONGO_URL,
-  clientId: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET,
-  callbackUrl: process.env.CALLBACK_URL,
-  secretKey: process.env.SECRET_KEY,
-  keyToken: process.env.KEY_TOKEN,
-  email: process.env.EMAIL,
-  emailPassword: process.env.EMAIL_PASSWORD,
-  tokenExpiration: process.env.TOKEN_EXPIRATION
+const CONFIG = {
+  PORT: process.env.PORT || "8080",
+  DB_NAME: process.env.DB_NAME || "test",
+  MONGO_USER: process.env.MONGO_USER || "",
+  MONGO_PASS: process.env.MONGO_PASS || "",
+  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "",
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || "",
+  GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL || "",
+  DATASOURCE: process.env.DATASOURCE || "MONGO",
 };
+
+console.log(CONFIG.DB_NAME)
+
+export default CONFIG;
