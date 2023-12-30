@@ -1,16 +1,74 @@
-import { Router } from "express";
-import { generateToken } from "../utils/utils.js";
+import userDTOResponse from "../dto/responses/user.response.dto.js";
 
+class AuthController {
+  async viewLogin(req, res) {
+    try {
+      res.render("login");
+    } catch (err) {
+      res.status(err.status || 500).json({
+        status: "error",
+        payload: err.message,
+      });
+    }
+  }
 
-const router = Router ();
-router.post('/login', (req,res)=>{
-    const {email, role}= req.body;
-    const user = {email, role};
-    const token = generateToken(user);
-    return res
-              .cookie('authToken', token, {maxAge: 36000, httpOnly: true})
-              .json({message: 'Logged in'});
+  async viewRegister(req, res) {
+    try {
+      res.render("register");
+    } catch (err) {
+      res.status(err.status || 500).json({
+        status: "error",
+        payload: err.message,
+      });
+    }
+  }
 
-});
+  async getCurrentUser(req, res) {
+    try {
+      const user = await req.user;
+      const userDTO = new userDTOResponse(user);
+      res.json(userDTO);
+    } catch (err) {
+      res.status(err.status || 500).json({
+        status: "error",
+        payload: err.message,
+      });
+    }
+  }
+  async logout(req, res) {
+    req.logout(function (err) {
+      if (err) {
+        console.error(err);
 
-export default router;
+        return res.redirect("/error");
+      }
+      res.render("login");
+    });
+  }
+
+  async redirectToHome(req, res) {
+    res.redirect("/home");
+  }
+
+  async productsList(req, res) {
+    res.redirect("/products");
+  }
+}
+
+const authController = new AuthController();
+const {
+  viewLogin,
+  viewRegister,
+  getCurrentUser,
+  logout,
+  redirectToHome,
+  productsList,
+} = authController;
+export {
+  viewLogin,
+  viewRegister,
+  getCurrentUser,
+  logout,
+  redirectToHome,
+  productsList,
+};

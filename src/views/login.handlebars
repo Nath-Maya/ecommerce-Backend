@@ -5,56 +5,37 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {{!-- <link rel="stylesheet" href="/tailwind.css"> --}}
-
     <title>Login</title>
 </head>
 
 <body>
-    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-2/4 mx-auto mt-20">
-  <h1 class="text-2xl font-bold mb-4">Login</h1>
-  <form id="loginForm" class="mb-4">
-    <div class="mb-4">
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-        Email
-      </label>
-      <input
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        id="email" name="email" type="email" required
-        placeholder="example@example.com"
-      />
+    <div class="container mx-auto">
+        <div class="field max-w-md mx-auto">
+            <label class="label mt-6 text-2xl font-bold">Login</label>
+            <form action="/login" method="post"
+                class="control has-icons-left has-icons-right bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                <input class="input is-success mt-3 placeholder-gray-500" type="text" name="email"
+                    placeholder="Correo Electrónico">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-user"></i>
+                </span>
+                <input class="input is-success mt-3 placeholder-gray-500" type="password" name="password"
+                    placeholder="Contraseña">
+                <button type="submit"
+                    class="w-full bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md mt-3">
+                    Ingresar
+                </button>
+            </form>
+            <button
+                class="w-full bg-gradient-to-r from-blue-400 to-blue-700 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md mt-3"
+                onclick="location.href='/github'">Autenticarse con GitHub
+            </button>
+            <h3 class="text-xl mt-3">¿Aún no te has registrado?</h3>
+            <button class="w-full bg-gradient-to-r from-red-400 to-red-700 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md mt-3"
+                onclick="location.href='/register'">Crea tu usuario aquí
+            </button>
+        </div>
     </div>
-    <div class="mb-6">
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-        Contraseña
-      </label>
-      <input
-        class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-        id="password" name="password" type="password" required
-        placeholder="********"
-      />
-    </div>
-    <div class="flex items-center justify-between">
-      <button
-        class="bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        type="submit"
-      >
-        Ingresar
-      </button>
-    </div>
-  </form>
-  <p class="text-sm">
-    ¿No estás registrado? <a class="text-blue-500 hover:text-blue-700" href="/register">Regístrate aquí</a>
-  </p>
-  <div class="mt-4">
-    <p class="text-sm">
-      <a class="text-blue-500 hover:text-blue-700" href="/session/github">Autenticarse con Github</a>
-    </p>
-  </div>
-</div>
-
-
-  <script type="module" src="/js/login.js"></script>
 </body>
 
 </html>
