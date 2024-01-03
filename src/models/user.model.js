@@ -6,10 +6,7 @@ const usersSchema = new Schema({
   email: String,
   age: Number,
   password: String,
-  cart: {
-    type: Schema.Types.ObjectId,
-    ref: "Carts",
-  },
+  cartId: {type: Schema.Types.ObjectId,ref: "carts"},
   role: {
     type: String,
     default: "user",

@@ -5,7 +5,7 @@ export function isAuth(req, res, next) {
    */
   if (req.isAuthenticated()) {
     // Si esta autenticado sigue con la ejecucion que queremos
-    console.log("usuario autenticado");
+    // console.log("\u001b[1;33m Usuario autenticado")
     return next();
   }
   // sino lo redirigimos al login
