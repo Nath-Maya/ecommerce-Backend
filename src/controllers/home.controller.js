@@ -1,7 +1,7 @@
 class HomeController {
   async viewHome(req, res) {
     try {
-      console.log("usuario guardado en session: ", req.user);
+      // console.log("\u001b[1;34m Usuario guardado en session: " + req.user);
       const user = req.user;
       res.render("home", { user });
     } catch (err) {
