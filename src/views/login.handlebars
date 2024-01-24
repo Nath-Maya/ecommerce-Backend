@@ -1,41 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{!-- <link rel="stylesheet" href="/tailwind.css"> --}}
+
     <title>Login</title>
 </head>
-
-<body>
-    <div class="container mx-auto">
-        <div class="field max-w-md mx-auto">
-            <label class="label mt-6 text-2xl font-bold">Login</label>
-            <form action="/login" method="post"
-                class="control has-icons-left has-icons-right bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <input class="input is-success mt-3 placeholder-gray-500" type="text" name="email"
-                    placeholder="Correo Electrónico">
+<div class="container">
+        <div class="field">
+            <label class="label mt-6">Login</label>
+            <form action="/login" method="post" class="control has-icons-left has-icons-right">
+                <input class="input is-success mt-3" type="text" name="email" placeholder="email" >
                 <span class="icon is-small is-left">
                     <i class="fas fa-user"></i>
                 </span>
-                <input class="input is-success mt-3 placeholder-gray-500" type="password" name="password"
-                    placeholder="Contraseña">
-                <button type="submit"
-                    class="w-full bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md mt-3">
-                    Ingresar
-                </button>
+                <input class="input is-success mt-3" type="password" name="password" placeholder="Password" >
+                <button type="submit" class="button is-primary mt-3">Ingresar</button>
             </form>
-            <button
-                class="w-full bg-gradient-to-r from-blue-400 to-blue-700 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md mt-3"
-                onclick="location.href='/github'">Autenticarse con GitHub
-            </button>
-            <h3 class="text-xl mt-3">¿Aún no te has registrado?</h3>
-            <button class="w-full bg-gradient-to-r from-red-400 to-red-700 hover:from-pink-500 hover:to-yellow-500 text-white p-2 rounded-md mt-3"
-                onclick="location.href='/register'">Crea tu usuario aquí
-            </button>
+            <button class="button is-primary mt-3" onclick="location.href='/github'">Autenticarse con GITHUB</button>
+            <h3>¿Aún no te has registrado?</h3>
+            <button class="button is-danger mt-3" onclick="location.href='/register'">Crea tu usuario aquí</button>
+            </div>
         </div>
-    </div>
-</body>
-
+</div>
 </html>

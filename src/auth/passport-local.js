@@ -2,6 +2,7 @@ import passport from "passport";
 import dotenv from "dotenv";
 dotenv.config();
 import { Strategy as LocalStrategy } from "passport-local";
+// passport-github2
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { encryptPassword, comparePassword } from "../config/bcrypt.js";
 import { UserService } from "../services/user.service.js";
@@ -12,18 +13,22 @@ const cartService = new CartService();
 const localStrategy = LocalStrategy;
 const githubStrategy = GitHubStrategy;
 
+// variables de entorno
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+
 
 passport.use(
   "register",
   new localStrategy(
     {
+     
       usernameField: "email",
       passwordField: "password",
-      passReqToCallback: true,
+      passReqToCallback: true, //Para que el callback reciba el req completo,
     },
     async (req, email, password, done) => {
+      // done es un callback que se ejecuta cuando termina la funcion
       const usuarioSaved = await userService.getUserByEmail({ email });
       if (usuarioSaved) {
         req.flash(
@@ -33,6 +38,7 @@ passport.use(
         return done(null, false);
       } else {
         const hashPass = await encryptPassword(password);
+        /** create new Cart */
         const newCart = await cartService.create();
         const newUser = {
           first_name: req.body.first_name,
@@ -57,9 +63,10 @@ passport.use(
     {
       usernameField: "email",
       passwordField: "password",
-      passReqToCallback: true,
+      passReqToCallback: true, //Para que el callback reciba el req completo
     },
     async (req, email, password, done) => {
+    
       const usuarioSaved = await userService.getUserByEmail({ email });
       if (!usuarioSaved) {
         req.flash(
@@ -85,8 +92,12 @@ passport.use(
   )
 );
 
+/** hay dos funciones que passport necesita para trabajar con los ids de los usuarios
+ * en toda la app:
+ * serializeUser: para guardar el id del usuario en la sesion
+ * deserializeUser: para obtener el usuario de la base de datos por el id */
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.id); // _id de mongo
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -94,17 +105,19 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
+/** AUTHENTICATION - GITHUB */
 passport.use(
   new githubStrategy(
     {
       clientID: GITHUB_CLIENT_ID,
       clientSecret: GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:8080/github/callback",
+      callbackURL: "http://localhost:8080/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
+     
       const user = {
         username: profile.username,
-        password: null,
+        password: null, 
       };
       const userSaved = await userService.getUserByUsername({
         username: user.username,

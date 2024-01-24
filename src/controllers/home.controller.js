@@ -1,7 +1,10 @@
 class HomeController {
   async viewHome(req, res) {
     try {
-      // console.log("\u001b[1;34m Usuario guardado en session: " + req.user);
+      /** Passport guarda automagicamente (en en login) los datos del user en la session
+       *  y puede accederse a ellos con req.user
+       */
+      console.log("usuario guardado en session: ", req.user);
       const user = req.user;
       res.render("home", { user });
     } catch (err) {

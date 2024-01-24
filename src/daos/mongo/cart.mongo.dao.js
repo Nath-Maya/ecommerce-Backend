@@ -39,7 +39,6 @@ export class CartMongoDao extends BaseMongoDao {
     } else {
       cart.products.push({ _id: product._id, quantity: 1 });
     }
-    console.log("----soy el carrito: " + cart)
     const cartUpdated = await this.db.findByIdAndUpdate(cart._id, {
       products: cart.products,
     });
@@ -56,7 +55,6 @@ export class CartMongoDao extends BaseMongoDao {
     } else {
       cart.products.push({ _id: product._id, quantity: quantity });
     }
-    console.log(cart)
     const cartUpdated = await this.db.findByIdAndUpdate(cart._id, {
       products: cart.products,
     });

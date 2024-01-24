@@ -11,7 +11,7 @@ import {
 
 router.get("/login", viewLogin);
 router.get("/register", viewRegister);
-
+/**passport lo dejo acá como middleware */
 router.post(
   "/register",
   passport.authenticate("register", {
@@ -34,6 +34,7 @@ router.get("/current", getCurrentUser);
 
 router.get("/logout", logout);
 
+/** rutas de auth con github */
 router.get(
   "/github",
   passport.authenticate("github", { scope: ["user:email"] })

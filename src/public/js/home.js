@@ -1,5 +1,6 @@
 const getCurrentUser = () => {
-  fetch("/current", {
+  // console.log("Get current user...");
+  fetch("/auth/current", {
     method: "GET",
   })
     .then((res) => res.json())
@@ -13,7 +14,7 @@ const getCurrentUser = () => {
           JSON.stringify(user.first_name + " " + user.last_name)
         );
         if (user.cart) {
-          localStorage.setItem("idCart", JSON.stringify(user.cart));
+          localStorage.setItem("cartId", JSON.stringify(user.cart));
         }
       }
     })
@@ -50,31 +51,34 @@ function renderProducts(products) {
   productsContainer.innerHTML = "";
   products.forEach((product) => {
     productsContainer.innerHTML += `
-    <div class="bg-white p-6 mb-4 shadow-md rounded-md">
-    <h2 class="text-xl font-bold mb-4">${product.title}</h2>
-    <p class="text-gray-700 mb-2">${product.code}</p>
-    <p class="text-gray-700 mb-2">${product.description}</p>
-    <p class="text-gray-700 mb-2">${product.price}</p>
-    <p class="text-gray-700 mb-2">${product.category}</p>
-    <p class="text-gray-700 mb-4">${product.stock} disponibles</p>
-    <img src="${product.thumbnail}" alt="${product.title}" class="mb-4 rounded-md shadow-md w-32 h-auto" />
-    <div class="flex items-center space-x-4">
-    <button
-    class="button is-small"
-    type="button"
-    onclick="addToCart('${product._id}')"
-  ><ion-icon name="cart"></ion-icon>
-  </button>
-  <button
-    class="button is-small"
-    type="button"
-    onclick="deleteProduct('${product._id}')"
-  ><ion-icon name="trash"></ion-icon></button>
+      <div class="card" style="width: 250px; margin: 20px">
+        <div class="card-image" style="padding: 15px">
+          <figure class="image is-4by3">
+            <img src="${product.thumbnail}" alt="Placeholder image" />
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-6">${product.title}</p>
+              <p class="title is-4">${product.description}</p>
+              <p class="subtitle is-6">${product.price}</p>
+            </div>
+          </div>
+          <button
+            class="button is-small"
+            type="button"
+            onclick="addToCart('${product._id}')"
+          ><ion-icon name="cart"></ion-icon>
+          </button>
+          <button
+            class="button is-small"
+            type="button"
+            onclick="deleteProduct('${product._id}')"
+          ><ion-icon name="trash"></ion-icon></button>
 
-    </div>
-</div>
-
-
+        </div>
+      </div>
     `;
   });
 }
@@ -113,9 +117,9 @@ function renderPagination(payload) {
 }
 
 const addToCart = (id) => {
-  const idCart = JSON.parse(localStorage.getItem("idCart"));
-  console.log(`Agregando producto id=${id} al carrito id=${idCart}`);
-  fetch(`/carts/${idCart}/products/${id}`, {
+  const cartId = JSON.parse(localStorage.getItem("cartId"));
+  console.log(`Agregando producto id=${id} al carrito id=${cartId}`);
+  fetch(`/carts/${cartId}/products/${id}`, {
     method: "PUT",
   })
     .then((res) => res.json())
@@ -139,18 +143,23 @@ const deleteProduct = (id) => {
 };
 
 const goToCart = () => {
-  const idCart = JSON.parse(localStorage.getItem("idCart"));
-  window.location.href = "/carts/" + idCart;
+  const cartId = JSON.parse(localStorage.getItem("cartId"));
+  window.location.href = "/carts/" + cartId;
 };
 const goToLogin = () => {
   window.location.href = "/login";
 };
 const goToRegister = () => {
-  window.location.href = "/register";
+  window.location.href = "/auth/register";
 };
 const goToLogout = () => {
+  /**Puedo borrar todo el local storage o solo algunos items:
+     *   localStorage.removeItem('nombreVariable1');
+         localStorage.removeItem('nombreVariable2');
+     */
+
   localStorage.clear();
-  window.location.href = "/logout";
+  window.location.href = "/auth/logout";
 };
 
 const init = () => {

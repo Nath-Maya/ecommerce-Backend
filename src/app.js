@@ -1,62 +1,87 @@
 import express from "express";
-import chalk from "chalk";
-import morgan from "morgan";
-import { Server as SocketServer } from "socket.io";
-import http from "http";
-import indexRoutes from "./routes/mongo/indexRoutes.js";
-import websockets from "./websockets/websockets.js";
-import exphbs from "express-handlebars";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { connectMongoDB } from "./config/configMongoDB.js";
+import {DATABASE_NAME, GH_CLIENT_ID, GH_SESSION_SECRET, MDB_HOST, MDB_PASS, MDB_USER, PORT, PROD_ENDPOINT} from "./config/dotenv.config.js";
+import { __src_dirname, pathJoin} from "./utils/utils.js";
+import handlebars from "express-handlebars";
+import viewsRouter from "./routes/views.router.js";
 import cookieParser from "cookie-parser";
-import {
-  sessionConfig,
-  passportInitialize,
-  passportSession,
-} from "./config/session-config.js";
-import flash from "connect-flash";
-import CONFIG from "./config/config.js";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import mongoose from "mongoose";
+import initializePassport from "./config/passport.config.js";
+import passport from "passport";
+import { validateResetKey, validateSession, validateSessionAfterLogin } from "./utils/middlewares/session.validations.js";
+import apiRouter from "./routes/api.router.js";
+import {errorHandler} from "./utils/middlewares/error.handler.js";
+import { addLogger, logger } from "./utils/middlewares/logger.handler.js";
+
+
+const MONGO_URL = `mongodb+srv://${MDB_USER}:${MDB_PASS}@${MDB_HOST}/${DATABASE_NAME}?retryWrites=true&w=majority`;
 
 const app = express();
-const { PORT } = CONFIG;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
-const httpServer = http.createServer(app);
-const io = new SocketServer(httpServer);
+app.use(cookieParser());
 
-websockets(io);
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl: MONGO_URL,
+      mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+      ttl: 30 * 60,
+    }),
+    resave: false,
+    saveUninitialized: false,
+    secret: GH_SESSION_SECRET,
+  })
+);
 
-app.use(morgan("dev"));
+app.use(passport.initialize())
+app.use(passport.session())
+initializePassport(GH_CLIENT_ID, GH_SESSION_SECRET)
+
+
+app.use(express.static(pathJoin(__src_dirname ,"public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname + "/public"));
-app.use(cookieParser("mySecret"));
-app.use(sessionConfig);
-app.use(passportInitialize);
-app.use(passportSession);
-app.use(flash());
 
-const handlebars = exphbs.create({
-  runtimeOptions: {
-    allowProtoPropertiesByDefault: true,
-  },
-});
 
-app.engine("handlebars", handlebars.engine);
-app.set("views", __dirname + "/views");
+
+app.engine("handlebars", handlebars.engine());
+app.set("views", pathJoin(__src_dirname, "views"));
 app.set("view engine", "handlebars");
 
-app.use("/", indexRoutes);
 
-connectMongoDB();
+mongoose
+  .connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
 
-const server = httpServer.listen(PORT, () =>
-  console.log(
-    chalk.bgYellowBright.black.bold(
-      `🚀  SERVER UP : ${PORT}.at ${new Date().toLocaleString()}`
-    )
-  )
-);
-server.on("error", (err) => console.log(err));
+    app.use(addLogger)
+
+    logger.info("mongoose connected");
+    
+    app.use("/api", apiRouter);
+    app.use(errorHandler);
+
+    app.get("/login", validateSessionAfterLogin, async (req, res) => {
+      res.render("login", {});
+    });
+
+    app.get("/register", validateSessionAfterLogin, async (req, res) => {
+      res.render("register", {});
+    });
+
+    app.get("/users/reset-password", (req, res) => {
+      res.render("initReset",{resetKeyError : req.query.invalid_or_expired_resetid})
+    });
+
+    app.get("/users/reset-password/:rpid",validateResetKey, (req, res) => {
+      res.render("passwordReset",{})
+    });
+
+    app.use("/",validateSession, viewsRouter);
+
+
+
+    app.listen(PORT??3000, () => {
+      logger.info(`Servidor iniciado en ${ PROD_ENDPOINT + PORT || "https://localhost:"+ 4000  +"/"} con éxito`);
+    });
+  });
