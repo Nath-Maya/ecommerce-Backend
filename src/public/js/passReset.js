@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 $(document).ready(() => {
   const passwordInput = $("#password");
   const showPasswordToggle = $("#showPasswordToggle");

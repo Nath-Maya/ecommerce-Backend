@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+
 const filter = document.getElementById("filterButton")
 
 filter.addEventListener("click",()=>{
@@ -18,7 +17,7 @@ filter.addEventListener("click",()=>{
   })
   
   const addProductToCart = async (cid,pid)=>{
-    await fetch(`localhost:4000/api/carts/${cid}/product/${pid}`, {
+    await fetch(`localhost:8080/api/carts/${cid}/product/${pid}`, {
       method: 'POST'
     });
   }
