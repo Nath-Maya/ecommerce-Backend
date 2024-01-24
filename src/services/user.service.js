@@ -1,21 +1,29 @@
-import { BaseService } from "./base.service.js";
-import getDAOS from "../daos/daos.factory.js";
-const { userDao } = getDAOS();
+import { hashPassword, isValidPassword } from "../utils/utils.js";
 
-export class UserService extends BaseService {
-  constructor() {
-    super(userDao);
+export default class UserService {
+  constructor(userRepository)
+  {
+    this.userRepository = userRepository
   }
-
-  async getUserByEmail(email) {
-    return await this.dao.getUserByEmail(email);
+  findUserById = async (id) => 
+  await this.userRepository.getOne(id);
+  findUserByCriteria = async (criteria) =>
+  await this.userRepository.getOneByCriteria(criteria);
+  createUser = async (user) => 
+  await this.userRepository.create(user);
+  updateUserPassword = async(userID, password)=>{
+    await this.userRepository.update(userID, {password: hashPassword(password)})
   }
-
-  async getUserByUsername(username) {
-    return await this.dao.getUserByUsername(username);
+  updateUserRole = async(userID, role)=>{
+    await this.userRepository.update(userID, {role})
   }
-
-  async getPurchaser(cart) {
-    return await this.dao.getPurchaser(cart);
+  validateRepeatedPassword = async(userID, password)=>{
+    return !isValidPassword(await this.findUserById(userID),password)
+  }
+  removeSensitiveUserData= (user)=>{
+    if(user){
+      delete user.password
+    }
+    return user
   }
 }

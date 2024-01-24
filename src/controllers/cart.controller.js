@@ -1,230 +1,132 @@
-import { CartService } from "../services/cart.service.js";
-import { ProductService } from "../services/product.service.js";
+import CustomError from "../utils/errors/CustomError.js";
+import ErrorTypes from "../utils/errors/ErrorTypes.js";
+import { generateNotFoundEntityDescription, generateUserCanNotAddOwnedProductDescription } from "../utils/errors/errorDescriptions.js";
+import { equalsIgnoreCase } from "../utils/utils.js";
 
-const cartService = new CartService();
-const productService = new ProductService();
-
-class CartController {
-  async create(req, res) {
-    try {
-      const cartCreated = await cartService.create();
-      cartCreated
-        ? res.status(201).json({
-            status: "success",
-            payload: cartCreated,
-          })
-        : res.json({
-            status: "error",
-          });
-    } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
-    }
+export default class CartController {
+  constructor(cartService, productService) {
+    this.cartService = cartService;
+    this.productService = productService;
   }
+  validateProducts = async (products,user) => {
+    if (products.length > 0) {
+      for (const product of products) {
+        await this.validateProduct(product.product,user);
+      }
+    }};
 
-  async getAll(req, res) {
-    try {
-      const allCarts = await cartService.getAll();
-      allCarts
-        ? res.status(200).json({
-            status: "success",
-            payload: allCarts,
-          })
-        : res.status(200).json({
-            status: "success",
-            payload: [],
+  validateProduct = async (product, user) => {
+    await this.productService
+      .existsByCriteria({ _id: product })
+      .then(async (exists) => {
+        if (!exists) {
+          CustomError.throwNewError({
+            error: ErrorTypes.ENTITY_DOES_NOT_EXIST_ERROR,
+            cause: generateNotFoundEntityDescription("Product"),
+            message: "Provided product does not exist",
+            customParameters: { entity: "Product", entityID: product },
           });
-    } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
-    }
-  }
-
-  async getProductsOfCart(req, res) {
-    try {
-      const idCart = req.params.idCart;
-      const cart = await cartService.getOne(idCart);
-      cart
-        ? res.status(200).json({
-            status: "success",
-            payload: cart.products,
-          })
-        : res.status(404).json({
-            status: "error",
-            message: "Sorry, no cart found by id: " + idCart,
-            payload: {},
-          });
-    } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
-    }
-  }
-
-  async viewCartDetail(req, res) {
-    try {
-      const idCart = req.params.idCart;
-
-      const cart = await cartService.getOne(idCart);
-      const products = cart.products;
-
-      cart
-        ? res.render("myCart", { products })
-        : res.status(404).json({
-            status: "error",
-            message: "Sorry, no cart found by id: " + idCart,
-            payload: {},
-          });
-    } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
-    }
-  }
-  async addProductToCart(req, res) {
-    try {
-      const cart = await cartService.getOne(req.params.idCart);
-      const product = await productService.getOne(req.params.idProduct);
-      const payload = req.body;
-      if (payload.quantity) {
-        if (payload.quantity < 0 || payload.quantity == 0)
-          throw new Error("La cantidad debe ser mayor a 0");
-        if (cart && product) {
-          const cartUpdated = await cartService.addManyOfTheSameProduct(
-            cart,
-            product,
-            payload.quantity
-          );
-          const response = await cartService.getOne(cartUpdated._id);
-          res.status(201).json({
-            status: "success",
-            payload: response,
-          });
-        } else {
-          res.status(404).json({ message: "Missing data" });
         }
-      } else {
-        if (cart && product) {
-          const cartUpdated = await cartService.addProduct(cart, product);
-          const response = await cartService.getOne(cartUpdated._id);
-          res.status(201).json({
-            status: "success",
-            payload: response,
+        if(product.owner === user.email && equalsIgnoreCase("PREMIUM", user.role) ){
+          CustomError.throwNewError({
+            error: ErrorTypes.USER_NOT_ALLOWED_ERROR,
+            cause: generateUserCanNotAddOwnedProductDescription(user, product),
+            message: "Can not add own products to cart"
           });
-        } else {
-          res.status(404).json({ message: "Missing data" });
         }
-      }
-    } catch (err) {
-      res.status(500).json({ message: err.message, line: err.line });
-    }
-  }
-  async updateAllProductsOfCart(req, res) {
-    try {
-      const cart = await cartService.getOne(req.params.idCart);
-      const payload = req.body;
-      if (cart) {
-        const cartUpdated = await cartService.updateProductsOfOneCart(
-          cart,
-          payload.products
-        );
-        const response = await cartService.getOne(cartUpdated._id);
-        res.status(201).json({
-          status: "success",
-          payload: response,
-        });
-      } else {
-        res.status(404).json({ message: "Missing data" });
-      }
-    } catch (err) {
-      res.status(500).json({ message: err.message, line: err.line });
-    }
-  }
-  async deleteOneProductOfCart(req, res) {
-    try {
-      const cart = await cartService.getOne(req.params.idCart);
-      const product = await productService.getOne(req.params.idProduct);
-      if (cart && product) {
-        const cartUpdated = await cartService.removeProduct(cart, product);
-        const response = await cartService.getOne(cartUpdated._id);
-        res.status(201).json({
-          status: "success",
-          payload: response,
-        });
-      } else {
-        res.status(404).json({ message: "Missing data" });
-      }
-    } catch (err) {
-      res.status(500).json({ message: err.message, line: err.line });
-    }
-  }
-  async deleteAllProductsOfCart(req, res) {
-    try {
-      const cart = await cartService.getOne(req.params.idCart);
-      if (cart) {
-        const cartUpdated = await cartService.emptyCart(cart);
-        const response = await cartService.getOne(cartUpdated._id);
-        res.status(201).json({
-          status: "success",
-          payload: response,
-        });
-      } else {
-        res.status(404).json({ message: "Missing data" });
-      }
-    } catch (err) {
-      res.status(500).json({ message: err.message, line: err.line });
-    }
+      })
   }
 
-  async purchaseCart(req, res) {
-    console.log("purchaseCart en cart controller");
+  getCart = async (req, res) => {
+    let cartID = req.params.cid;
     try {
-      const cart = await cartService.getOne(req.params.idCart);
-      if (cart) {
-        const response = await cartService.purchaseCart(cart);
-        res.status(201).json({
-          status: "success",
-          payload: response,
-        });
-      } else {
-        res.status(404).json({ message: "Missing data" });
-      }
+      const cart = await this.cartService.getOne(cartID);
+      res.json({ status: "success", payload: cart });
     } catch (err) {
-      res.status(500).json({ message: err.message, line: err.line });
+      err.notFoundEntity = "Cart";
+      throw err;
     }
-  }
+  };
+
+  createCart = async (req, res) => {
+    const newCart = req.body ?? { products: [] };
+    await this.validateProducts(newCart.products);
+    await this.cartService.createCart(newCart);
+    res
+      .status(201)
+      .json({ status: "success", payload: "Cart created successfully" });
+  };
+
+  insertCartProduct = async (req, res) => {
+    const { cid, pid } = req.params;
+    await this.validateProduct(pid);
+    await this.cartService.insertCartProducts(cid, pid);
+    res
+      .status(201)
+      .json({ status: "success", payload: "Product inserted successfully" });
+  };
+
+  deleteCartProduct = async (req, res) => {
+    const { cid, pid } = req.params;
+    await this.cartService.removeFromCart(cid, pid);
+    res
+      .status(200)
+      .json({ status: "success", payload: "Product deleted successfully" });
+  };
+
+  updateEntireCart = async (req, res) => {
+    const { cid } = req.params;
+    const cart = req.body;
+    await this.validateProducts(cart.products);
+    await this.cartService.updateCart(cid, cart);
+    res.status(200).json({
+      status: "success",
+      payload: "product list updated successfully",
+    });
+  };
+
+  updateCartProductQuantity = async (req, res) => {
+    const { cid, pid } = req.params;
+    const { quantity } = req.body;
+    if (!isNaN(quantity)) {
+      await this.cartService.addQuantityToProduct(cid, pid, quantity);
+      res
+        .status(200)
+        .json({ status: "success", payload: "Product deleted successfully" });
+    } else {
+      let err = new Error("field [quantity] passed and must be a number");
+      err.status = 422;
+      throw err;
+    }
+  };
+
+  deleteAllProductsFromCart = async (req, res) => {
+    const { cid } = req.params;
+    await this.cartService.deleteAllProductsFromCart(cid);
+    res.status(200).json({
+      status: "success",
+      payload: "All products removed from cart successfully",
+    });
+  };
+
+  finalizePurchase = async (req, res) => {
+    const { cid } = req.params;
+    const productsWithoutStock = await this.cartService.finalizePurchase(
+      cid,
+      req.user.email
+    );
+
+    if (productsWithoutStock.length > 0) {
+      res.status(409).json({
+        status: "failure",
+        message: "Purchse has products with no stock",
+        payload: { products: productsWithoutStock },
+      });
+    } else {
+      res.status(200).json({
+        status: "success",
+        payload: "Purchse finished sucessfully",
+      });
+    }
+  };
 }
-
-
-const cartController = new CartController();
-
-
-const {
-  create,
-  getAll,
-  getProductsOfCart,
-  viewCartDetail,
-  addProductToCart,
-  updateAllProductsOfCart,
-  deleteOneProductOfCart,
-  deleteAllProductsOfCart,
-  purchaseCart,
-} = cartController;
-
-export {
-  create,
-  getAll,
-  getProductsOfCart,
-  viewCartDetail,
-  addProductToCart,
-  updateAllProductsOfCart,
-  deleteOneProductOfCart,
-  deleteAllProductsOfCart,
-  purchaseCart,
-};

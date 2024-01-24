@@ -5,34 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 </head>
 
-<body class="bg-gray-100">
-    <div class="container mx-auto p-8 bg-white shadow-md rounded-md mt-20">
-        <h1 class="text-2xl font-bold mb-4">Chat</h1>
-        <form id="chatForm" action="/message" method="POST">
-            <div class="mb-4">
-                <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Nombre de Usuario</label>
-                <input type="text"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="username" placeholder="Ingresar el Nombre de Usuario" name="user" required>
-            </div>
-            <div class="mb-4">
-                <label for="message" class="block text-gray-700 text-sm font-bold mb-2">Mensaje</label>
-                <input type="text"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="message" placeholder="Ingresar el Mensaje" name="message" required>
-            </div>
-            <button type="submit"
-                class="bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Ingresar Mensaje
-            </button>
-        </form>
+<body>
+    <div id="container-form">
+        <h1>Chat</h1>
+        <form id="container-form" action="/message" method="POST">
+    <input type="text" id="username" placeholder="Ingresar el Nombre de Usuario" name="user" required>
+    <input type="text" id="message" placeholder="Ingresar el Mensaje" name="message" required> 
+    <button type="submit">Ingresar Mensaje</button>
+</form>
     </div>
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/chat.js"></script>
+   <script src="/socket.io/socket.io.js"></script>
+   <script src="/js/chat.js"></script>
 </body>
-
 </html>

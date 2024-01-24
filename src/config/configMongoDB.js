@@ -11,12 +11,13 @@ const config = {
   },
 };
 
+console.log(config.mongoDB.URL+'  test')
 
 export const connectMongoDB = async () => {
   try {
     await mongoose.connect(config.mongoDB.URL, config.mongoDB.options);
-    console.log("\u001b[1;36m Connection successful at the database")
+    console.log("Connected to BD");
   } catch (error) {
-    console.error("\u001b[1;31m Connection failed at the database" + error);
+    console.log("Error Conect BD", error);
   }
 };

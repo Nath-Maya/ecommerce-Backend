@@ -1,113 +1,129 @@
-import { ProductService } from "../services/product.service.js";
+import CustomError from "../utils/errors/CustomError.js";
+import ErrorTypes from "../utils/errors/ErrorTypes.js";
+import { equalsIgnoreCase } from "../utils/utils.js";
 
-const productService = new ProductService();
-
-class ProductController {
-  async getAll(req, res) {
-    try {
-      const { limit, page, sort, query } = req.query;
-
-      const products = await productService.getAll(limit, page, sort, query);
-      products
-        ? res.status(200).json({
-            status: "success",
-            payload: products,
-          })
-        : res.status(200).json({ status: "success", payload: [] });
-    } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
-    }
+export default class ProductController {
+  constructor(productService) {
+    this.productService = productService;
   }
 
-  async getOne(req, res) {
-    try {
-      const id = req.params.id;
-      const product = await productService.getOne(id);
-      product
-        ? res.status(200).json({
-            status: "success",
-            payload: product,
-          })
-        : res.status(404).json({
-            status: "error",
-            message: "Sorry, no product found by id: " + id,
-            payload: {},
-          });
-    } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
-    }
-  }
+  getAllProducts = (req, res) => {
+    let responseBodyMapping;
+    let { limit, page, query, sort } = req.query;
 
-  async create(req, res) {
+    if (!limit || parseInt(limit) === 0) limit = 10;
+    this.productService
+      .getAllPaginated(limit, page, query, sort)
+      .then((pagRes) => {
+        responseBodyMapping = pagRes;
+        if (
+          page &&
+          (responseBodyMapping.totalPages < parseInt(page) ||
+            parseInt(page) < 1 ||
+            isNaN(page))
+        ) {
+          let err = new Error("Requested page doesn't exist");
+          err.status = 404;
+          throw err;
+        }
+
+        const linkURL =
+          req.protocol + "://" + req.get("host") + req.baseUrl + "?page=";
+        responseBodyMapping.prevLink = null;
+        responseBodyMapping.nextLink = null;
+
+        if (responseBodyMapping.prevPage)
+          responseBodyMapping.prevLink = linkURL + responseBodyMapping.prevPage;
+        if (responseBodyMapping.nextPage)
+          responseBodyMapping.nextLink = linkURL + responseBodyMapping.nextPage;
+
+        res.json({ status: "success", ...responseBodyMapping });
+      });
+  };
+  getProduct = (req, res, next) => {
+    let productID = req.params.pid;
+    this.productService
+      .findproductById(productID)
+      .then((product) => {
+        res.json(product);
+      })
+      .catch((err) => {
+        err.notFoundEntity = "Product";
+        next(err);
+      });
+  };
+  createProduct = async (req, res) => {
+    const newProduct = req.body;
+    const productFound = await this.productService.existsByCriteria({
+      code: newProduct.code,
+    });
+    if (productFound) {
+      CustomError.throwNewError({
+        name: ErrorTypes.ENTITY_ALREADY_EXISTS_ERROR,
+        cause: "Provided product already exists",
+        message: `Product with code ${newProduct.code}  already exists`,
+        customParameters: { entity: "Product", entityID: newProduct.code },
+      });
+    } else {
+      await this.productService.createProduct(newProduct);
+      res
+        .status(201)
+        .json({ status: "success", payload: "Product created successfully" });
+    }
+  };
+
+  updateProductData = async (req, res, next) => {
+    const productID = req.params.pid;
+    const modProduct = req.body;
+
     try {
-      const newProduct = req.body;
-      const response = await productService.getAll();
-      const allProducts = response.docs;
-      const product = allProducts.find(
-        (product) => product.code == newProduct.code
-      );
-      if (product) {
-        res.status(400).json({
-          status: "error",
-          payload:
-            "Invalid request body. Code already exists: " + newProduct.code,
+      if (
+        await this.#validateProdManipulationByUser(req.user, productID)
+      ) {
+        await this.productService.updateProduct(productID, modProduct);
+        return res
+          .status(200)
+          .json({ status: "success", payload: "Product updated successfully" });
+      } else {
+        CustomError.throwNewError({
+          name: ErrorTypes.USER_NOT_ALLOWED_ERROR,
+          cause: "Can not modify product that current user does not own",
+          message: `Can not modify product that current user does not own`,
         });
-        return;
       }
-      const productCreated = await productService.create(newProduct);
+    } catch (err) {
+      err.notFoundEntity = "Product";
+      next(err);
+    }
+  };
 
-      res.status(201).json({
-        status: "success",
-        payload: productCreated,
-      });
+  deleteProduct = async (req, res, next) => {
+    const productID = req.params.pid;
+    try {
+      if (
+        await this.#validateProdManipulationByUser(req.user, productID)
+      ) {
+        await this.productService.delete(productID);
+        res
+          .status(200)
+          .json({ status: "success", payload: "Product deleted successfully" });
+      } else {
+        CustomError.throwNewError({
+          name: ErrorTypes.USER_NOT_ALLOWED_ERROR,
+          cause: "Can not modify product that current user does not own",
+          message: `Can not modify product that current user does not own`,
+        });
+      }
     } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
+      err.notFoundEntity = "Product";
+      next(err);
     }
-  }
+  };
 
-  async update(req, res) {
-    try {
-      const id = req.params.id;
-      const newProduct = req.body;
-      const productUpdated = await productService.update(id, newProduct);
-      res.status(200).json({
-        status: "success",
-        payload: productUpdated,
-      });
-    } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
-    }
-  }
-  async deleteOne(req, res) {
-    try {
-      const id = req.params.id;
-      const productDeleted = await productService.delete(id);
-      res.status(200).json({
-        status: "success",
-        payload: productDeleted,
-      });
-    } catch (err) {
-      res.status(err.status || 500).json({
-        status: "error",
-        payload: err.message,
-      });
-    }
+  async #validateProdManipulationByUser(user, productID) {
+    return equalsIgnoreCase(user.role, "ADMIN") ||
+      (equalsIgnoreCase(user.role, "PREMIUM") &&
+        (await this.productService.findproductById(productID)).owner ===
+        user.email);
   }
 }
-
-const productController = new ProductController();
-const { getAll, getOne, create, update, deleteOne } = productController;
-
-export { getAll, getOne, create, update, deleteOne };
