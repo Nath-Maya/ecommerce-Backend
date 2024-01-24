@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 $(document).ready(() => {
     $("#initPasswordResetForm").submit((event)=>{
         event.preventDefault();

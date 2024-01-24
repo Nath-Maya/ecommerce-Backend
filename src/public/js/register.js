@@ -1,9 +1,4 @@
-/* eslint-disable no-undef */
-
 $(document).ready(function () {
-
-    /*var source = $("#login-template").html();
-    var template = Handlebars.compile(source);*/
 
     $("#registerForm").submit((event)=>{
       event.preventDefault();
