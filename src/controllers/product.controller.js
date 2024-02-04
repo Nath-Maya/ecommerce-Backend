@@ -2,43 +2,29 @@ import CustomError from "../utils/errors/CustomError.js";
 import ErrorTypes from "../utils/errors/ErrorTypes.js";
 import { equalsIgnoreCase } from "../utils/utils.js";
 
+const {GOOGLE_MAIL_SENDER} = process.env;
+
 export default class ProductController {
-  constructor(productService) {
+  constructor(productService, mailService) {
     this.productService = productService;
+    this.mailService = mailService
   }
 
-  getAllProducts = (req, res) => {
-    let responseBodyMapping;
-    let { limit, page, query, sort } = req.query;
-
-    if (!limit || parseInt(limit) === 0) limit = 10;
-    this.productService
-      .getAllPaginated(limit, page, query, sort)
-      .then((pagRes) => {
-        responseBodyMapping = pagRes;
-        if (
-          page &&
-          (responseBodyMapping.totalPages < parseInt(page) ||
-            parseInt(page) < 1 ||
-            isNaN(page))
-        ) {
-          let err = new Error("Requested page doesn't exist");
-          err.status = 404;
-          throw err;
+  getAllProducts = async (req, res, next) => {
+    try {
+      let { limit, page, query, sort } = req.query;
+      if(!query.category)
+        query = null
+      const pagRes = await this.productService
+        .getAllProductsPaginated(limit, page, query, sort)
+        if(!pagRes)
+          CustomError.throwNewError({name:ErrorTypes.INLINE_CUSTOM_ERROR, message:"Requested products page doesn't exist", status: 404});
+        
+          res.json({ status: "success", ...pagRes });
         }
-
-        const linkURL =
-          req.protocol + "://" + req.get("host") + req.baseUrl + "?page=";
-        responseBodyMapping.prevLink = null;
-        responseBodyMapping.nextLink = null;
-
-        if (responseBodyMapping.prevPage)
-          responseBodyMapping.prevLink = linkURL + responseBodyMapping.prevPage;
-        if (responseBodyMapping.nextPage)
-          responseBodyMapping.nextLink = linkURL + responseBodyMapping.nextPage;
-
-        res.json({ status: "success", ...responseBodyMapping });
-      });
+     catch (error) {
+      next(error);
+    }
   };
   getProduct = (req, res, next) => {
     let productID = req.params.pid;
@@ -52,23 +38,27 @@ export default class ProductController {
         next(err);
       });
   };
-  createProduct = async (req, res) => {
-    const newProduct = req.body;
-    const productFound = await this.productService.existsByCriteria({
-      code: newProduct.code,
-    });
-    if (productFound) {
-      CustomError.throwNewError({
-        name: ErrorTypes.ENTITY_ALREADY_EXISTS_ERROR,
-        cause: "Provided product already exists",
-        message: `Product with code ${newProduct.code}  already exists`,
-        customParameters: { entity: "Product", entityID: newProduct.code },
+  createProduct = async (req, res, next) => {
+    try {
+      const newProduct = {...req.body, owner: req.user.email};
+      const productFound = await this.productService.existsByCriteria({
+        code: newProduct.code,
       });
-    } else {
-      await this.productService.createProduct(newProduct);
-      res
-        .status(201)
-        .json({ status: "success", payload: "Product created successfully" });
+      if (productFound) {
+        CustomError.throwNewError({
+          name: ErrorTypes.ENTITY_ALREADY_EXISTS_ERROR,
+          cause: "Provided product already exists",
+          message: `Product with code ${newProduct.code}  already exists`,
+          customParameters: { entity: "Product", entityID: newProduct.code },
+        });
+      } else {
+        await this.productService.createProduct(newProduct);
+        res
+          .status(201)
+          .json({ status: "success", payload: "Product created successfully" });
+      }
+    } catch (error) {
+      next(error);
     }
   };
 
@@ -77,9 +67,7 @@ export default class ProductController {
     const modProduct = req.body;
 
     try {
-      if (
-        await this.#validateProdManipulationByUser(req.user, productID)
-      ) {
+      if (await this.#validateProdManipulationByUser(req.user, productID)) {
         await this.productService.updateProduct(productID, modProduct);
         return res
           .status(200)
@@ -100,10 +88,40 @@ export default class ProductController {
   deleteProduct = async (req, res, next) => {
     const productID = req.params.pid;
     try {
-      if (
-        await this.#validateProdManipulationByUser(req.user, productID)
-      ) {
+      if (await this.#validateProdManipulationByUser(req.user, productID)) {
+        const productToBeDeleted = await this.productService.findproductById(productID);
         await this.productService.delete(productID);
+        this.mailService.getTransport().sendMail({
+          from: `RS CODER <${GOOGLE_MAIL_SENDER}>`,
+          to: productToBeDeleted.owner,
+          subject: `Your product has been deleted`,
+          html: `<!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <titleYour product has been deleted</title>
+
+          </head>
+          <body>
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <h1>Your product has been deleted</h1>
+       
+                  <p>Hello,</p>
+                  <p>Your product <br>${productToBeDeleted.title}</br> was deleted by an admin</p>
+                  <p>If you think this was an error, please send your queries to <a href="mailto:${GOOGLE_MAIL_SENDER}">us</a></p>
+                  <br>
+          
+                </div>
+              </div>
+            </div>
+          </body>
+          </html>
+          `,
+        });
+
         res
           .status(200)
           .json({ status: "success", payload: "Product deleted successfully" });
@@ -121,9 +139,11 @@ export default class ProductController {
   };
 
   async #validateProdManipulationByUser(user, productID) {
-    return equalsIgnoreCase(user.role, "ADMIN") ||
+    return (
+      equalsIgnoreCase(user.role, "ADMIN") ||
       (equalsIgnoreCase(user.role, "PREMIUM") &&
         (await this.productService.findproductById(productID)).owner ===
-        user.email);
+          user.email)
+    );
   }
 }

@@ -13,12 +13,17 @@ const findLowestMDBError = (error)=>{
 
 // eslint-disable-next-line no-unused-vars
 export const errorHandler = (error,req,res, next)=>{
+    if (error){
     logger.debug(error.message)
     logger.error(error.cause);
 
     if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
         return res.status(400).send({ status: "error", message: "Request is malformed. Please Check Syntax." });
     }
+
+    if(error.status === 403)
+    return res.status(403).send({ status: "error", message: "You are not allowed to make this request. Check if You are logged in" });
+
     if(Object.values(ErrorTypes.MDB_ERROR).includes(error.name))
     {
         error = findLowestMDBError(error)
@@ -43,8 +48,15 @@ export const errorHandler = (error,req,res, next)=>{
                 return res.status(404).send({status:"error", message: `${error.entityType}${  error.entityID? " with id [" + error.entityID +"] " : " "}"does not exist`})
             case ErrorTypes.USER_NOT_ALLOWED_ERROR:
                 return res.status(403).send({status:"error", message: `Current user is not allowed to make this request`})
+            case ErrorTypes.INLINE_CUSTOM_ERROR:
+                return res.status(error.status).send({status:"error", message: error.message})
            default:
                 return res.status(500).send({status:"error", message: "Unhandled Error"})
         }
     }
+}
+else
+{
+    logger.debug("Endpoint resolved without issues")
+}
 }

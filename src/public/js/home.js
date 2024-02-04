@@ -153,10 +153,6 @@ const goToRegister = () => {
   window.location.href = "/auth/register";
 };
 const goToLogout = () => {
-  /**Puedo borrar todo el local storage o solo algunos items:
-     *   localStorage.removeItem('nombreVariable1');
-         localStorage.removeItem('nombreVariable2');
-     */
 
   localStorage.clear();
   window.location.href = "/auth/logout";

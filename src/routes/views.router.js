@@ -1,16 +1,27 @@
 import { Router } from "express";
-import { currentUserCanHaveCarts } from "../utils/middlewares/session.validations.js";
-import ProductController from "../controllers/product.controller.js";
+import {
+  currentUserCanHaveCarts,
+  currentUserIsAdmin,
+  validateActiveSession,
+} from "../utils/middlewares/session.validations.js";
 import ProductRepository from "../dao/repository/product.repository.js";
 import ProductService from "../services/product.service.js";
-import CartController from "../controllers/cart.controller.js";
 import CartService from "../services/cart.service.js";
 import CartRepository from "../dao/repository/cart.repository.js";
+import UserService from "../services/user.service.js";
+import UserRepository from "../dao/repository/user.repository.js";
 
 const viewsRouter = Router();
-const productService = new ProductService(new ProductRepository())
-const productController = new ProductController(productService)
-const cartController = new CartController(new CartService(productService, new CartRepository()), productService)
+const productService = new ProductService(new ProductRepository());
+const cartService =new CartService(productService, new CartRepository());
+
+const viewContext = (req, data)=>{
+  return {user:req.user, data}
+}
+
+const userService = new UserService(new UserRepository());
+
+viewsRouter.use(validateActiveSession);
 
 viewsRouter.get("/products", (req, res) => {
   res.redirect("/products/1");
@@ -21,63 +32,49 @@ viewsRouter.get("/products/:pgid?", async (req, res) => {
   let { category, sort } = req.query;
   let data;
   try {
-    data = await productController.getAllProducts(
+    data = await productService.getAllProductsPaginated(
       10,
       pgid,
-      { category: category },
-      sort
+      {category},
+      sort,
+      req.originalUrl
     );
     if (isNaN(pgid) || pgid > data.totalPages)
       data = { invalidPageError: true };
+    res.render("products", viewContext(req,data));
   } catch (err) {
     console.error(err);
   }
-  res.render("products", data);
 });
 
 viewsRouter.get("/product/:pid", async (req, res) => {
   const { pid } = req.params;
   let products;
   try {
-    products = await productController.getProduct(pid);
+    products = await productService.findproductById(pid);
   } catch (err) {
     console.error(err);
   }
-  res.render("product", products);
+  res.render("product", viewContext(req,products));
 });
 
-viewsRouter.get("/carts/:cid" ,currentUserCanHaveCarts,async (req, res) => {
+viewsRouter.get("/carts/:cid", currentUserCanHaveCarts, async (req, res) => {
   const { cid } = req.params;
   let cart;
   try {
-    cart = await cartController.getCart(cid);
+    cart = await cartService.findcartById(cid);
   } catch (err) {
     console.error(err);
   }
-  res.render("cart", cart);
+  res.render("cart", viewContext(req,cart));
 });
 
-viewsRouter.get("/", (req, res) => {
-  res.send();
+viewsRouter.get("/profile",  (req, res) => {
+  res.render("profile", viewContext(req));
 });
 
-viewsRouter.get("/profile", (req, res) => {
-  res.render("profile", { user: req.session.passport.user });
+viewsRouter.get("/admin", currentUserIsAdmin, async (req, res) => {
+  const allUsersPaginated =  await userService.getAllUsers();
+  return res.render("admin", viewContext(req,allUsersPaginated));
 });
-
-viewsRouter.get("/error", (req, res) => {
-  switch (req.statusCode) {
-    case 500:
-      res.render("error", {
-        httpStatus: 500,
-        message: "An error has ocurred",
-      });
-      break;
-    default:
-      res.render("error", { httpStatus: 404, message: "Not found" });
-      break;
-  }
-});
-
-
 export default viewsRouter;

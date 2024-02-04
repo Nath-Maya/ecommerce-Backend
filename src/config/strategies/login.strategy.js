@@ -32,6 +32,7 @@ export default () => new Strategy(
           }
           if (!isValidPassword(user, password)) 
             return done(null, false);
+          await userService.setLastConnected(user);
         }
         logger.debug(`User logged in successfully ${JSON.stringify(user)}`)
         return done(null, userService.removeSensitiveUserData(user));
