@@ -1,18 +1,28 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const cartsSchema = new Schema({
-  products: [
-    {
-      product: {
-        type: Schema.Types.ObjectId,
-        ref: "products",
-      },
-      quantity: {
-        type: Number,
-        default: 0,
-      },
+const cartProductSchema = mongoose.Schema({
+  product:{
+    type: mongoose.Types.ObjectId,
+    ref:"products",
+    required:true
+  },
+  quantity: {
+    type: Number,
+    default: 1,
+  },
+}, { _id: false});
+
+export const cartsSchema = mongoose.Schema(
+  {
+    products: {
+      type: [cartProductSchema],
+      required: true
     },
-  ],
-});
-
-export default model("carts", cartsSchema);
+    expiresAt: {
+      type: Date,
+      expires: 3600, // The TTL index will handle document expiration
+      default: Date.now, // Set the default expiration date
+    },
+  },
+  { versionKey: false}
+);

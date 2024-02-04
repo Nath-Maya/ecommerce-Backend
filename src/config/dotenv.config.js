@@ -16,7 +16,3 @@ export const {
   GH_CLIENT_ID,
   PERSISTENCE
 } = process.env;
-
-console.log(pathJoin(__root_dirname, ".env"));
-
-console.log("Ruta del archivo .env:", pathJoin(__root_dirname, ".env"));

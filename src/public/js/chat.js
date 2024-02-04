@@ -5,21 +5,21 @@ const btn = document.getElementById("send");
 const usernameInput = document.getElementById("username");
 const messageInput = document.getElementById("message");
 
-/** Cuando envía mensaje lo envío al servidor */
+
 btn.addEventListener("click", () => {
   const message = messageInput.value;
   const username = usernameInput.value;
   messageInput.value = "";
   usernameInput.value = "";
 
-  //enviar mensaje al servidor
+ 
   socket.emit("new-message", {
     message: message,
     username: username,
   });
 });
 
-/** El cliente recibe los mensajes desde el servidor*/
+
 socket.on("refresh-messages", (messages) => {
   messageContainer.innerHTML = messages
     .map((message) => {

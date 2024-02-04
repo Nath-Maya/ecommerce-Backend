@@ -1,7 +1,20 @@
 import mongoose from "mongoose";
+import { purgeNullValuesFromObject } from "../../utils/utils.js";
 export class CommonMDBRepository {
   constructor(collectionName, docSchema) {
     this.baseModel = mongoose.model(collectionName, docSchema);
+  }
+
+  async getAllPaginated(limit = 10, page = 1, query = {}, sort = null, customLabels = {}
+) {
+    query = purgeNullValuesFromObject(query)
+    return await this.baseModel.paginate(query, {
+      limit,
+      page,
+      sort,
+      customLabels,
+      lean:true
+    });
   }
 
   async getAll() {
@@ -16,6 +29,11 @@ export class CommonMDBRepository {
 
   async existsByCriteria(criteria) {
     const foundProduct = await this.baseModel.exists(criteria);
+    return foundProduct;
+  }
+
+  async findByCriteria(criteria, options) {
+    const foundProduct = await this.baseModel.find(criteria, options);
     return foundProduct;
   }
 
@@ -38,5 +56,16 @@ export class CommonMDBRepository {
   async getOneByCriteria(criteria) {
     const found = await this.baseModel.findOne(criteria,null,{lean:true});
     return found;
+  }
+
+  async upsertField(id, fieldname, field){
+    let fieldSet = {}
+    fieldSet[fieldname] = field;
+    await this.baseModel.findByIdAndUpdate(id, {$set:{...fieldSet}})
+  }
+
+  async deleteByCriteria(criteria) {
+    const deletedRes = await this.baseModel.deleteMany(criteria);
+    return deletedRes;
   }
 }

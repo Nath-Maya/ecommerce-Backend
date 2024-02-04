@@ -13,6 +13,10 @@ import { validateResetKey, validateSession, validateSessionAfterLogin } from "./
 import apiRouter from "./routes/api.router.js";
 import {errorHandler} from "./utils/middlewares/error.handler.js";
 import { addLogger, logger } from "./utils/middlewares/logger.handler.js";
+import swaggerUiExpress from "swagger-ui-express";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerOptions from "./config/options/swagger.options.js";
+const HTTPS_RAILWAY_PUBLIC_DOMAIN = RAILWAY_PUBLIC_DOMAIN? `https://${RAILWAY_PUBLIC_DOMAIN}`: null;
 
 
 const MONGO_URL = `mongodb+srv://${MDB_USER}:${MDB_PASS}@${MDB_HOST}/${DATABASE_NAME}?retryWrites=true&w=majority`;
@@ -21,6 +25,7 @@ const app = express();
 
 app.use(cookieParser());
 
+logger.info("Connecting to Mongo...")
 app.use(
   session({
     store: MongoStore.create({
@@ -59,6 +64,9 @@ mongoose
     logger.info("mongoose connected");
     
     app.use("/api", apiRouter);
+    app.use('/apidocs',swaggerUiExpress.serve,swaggerUiExpress.setup(swaggerJSDoc(swaggerOptions)))
+
+
     app.use(errorHandler);
 
     app.get("/login", validateSessionAfterLogin, async (req, res) => {
@@ -77,11 +85,39 @@ mongoose
       res.render("passwordReset",{})
     });
 
+
+    app.get("/error", (req, res) => {
+      if(req.headers["user-agent"])
+        switch (req.statusCode) {
+          case 500:
+            res.render("error", {
+              httpStatus: 500,
+              message: "An error has ocurred",
+            });
+            break;
+          default:
+            res.render("error", { httpStatus: 404, message: "Not found" });
+            break;
+        }
+      else
+      switch (req.statusCode) {
+        case 500:
+          res.status(500).send("error", {
+            httpStatus: 500,
+            message: "An error has ocurred",
+          });
+          break;
+        default:
+          res.status(404).send({ status: "Error", message: "resource not found" });
+          break;
+      }
+    }); 
+
     app.use("/",validateSession, viewsRouter);
 
 
 
     app.listen(PORT??3000, () => {
-      logger.info(`Servidor iniciado en ${ PROD_ENDPOINT + PORT || "https://localhost:"+ 4000  +"/"} con éxito`);
+      logger.info(`Servidor iniciado en ${ PROD_ENDPOINT + PORT || "https://localhost:"+ 8080  +"/"} con éxito`);
     });
   });
